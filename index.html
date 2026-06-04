@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>University Marks Calculator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;600;800&display=swap');
+
+  :root {
+    --bg: #f5f2eb;
+    --surface: #ffffff;
+    --surface2: #f0ece3;
+    --border: #d4cfc4;
+    --text: #1a1814;
+    --text2: #6b6560;
+    --accent: #c84b31;
+    --accent2: #2b6cb0;
+    --theory: #c84b31;
+    --lab: #2b7a2b;
+    --success: #2b7a2b;
+    --warn: #b45309;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--text);
+    color: var(--bg);
+    padding: 28px 32px 24px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  header h1 { font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 800; letter-spacing: -0.5px; }
+  header span { font-family: var(--mono); font-size: 0.78rem; color: #aaa; }
+
+  /* ── Layout ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
+
+  /* ── Weightage Banner ── */
+  .weight-strip {
+    display: flex; gap: 0; border: 1.5px solid var(--border);
+    border-radius: 6px; overflow: hidden; margin-bottom: 32px;
+    font-family: var(--mono); font-size: 0.78rem;
+  }
+  .ws-cell {
+    flex: 1; padding: 10px 14px; background: var(--surface);
+    border-right: 1.5px solid var(--border); text-align: center;
+  }
+  .ws-cell:last-child { border-right: none; }
+  .ws-cell strong { display: block; font-size: 1.1rem; font-weight: 600; }
+  .ws-theory strong { color: var(--theory); }
+  .ws-lab strong { color: var(--lab); }
+
+  /* ── Grid ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media(max-width:700px){ .grid-2 { grid-template-columns: 1fr; } }
+
+  /* ── Card ── */
+  .card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .card-head {
+    padding: 14px 18px 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1.5px solid var(--border);
+    background: var(--surface2);
+  }
+  .card-head h2 { font-size: 1rem; font-weight: 600; }
+  .badge {
+    font-family: var(--mono); font-size: 0.72rem;
+    padding: 2px 8px; border-radius: 3px;
+    background: var(--text); color: var(--bg);
+  }
+  .badge.theory { background: var(--theory); }
+  .badge.lab { background: var(--lab); }
+  .card-body { padding: 18px; }
+
+  /* ── Count Row ── */
+  .count-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    font-size: 0.88rem;
+  }
+  .count-row label { font-weight: 600; white-space: nowrap; }
+  .count-input {
+    width: 64px; padding: 6px 10px;
+    border: 1.5px solid var(--border); border-radius: 4px;
+    font-family: var(--mono); font-size: 0.9rem;
+    background: var(--bg); color: var(--text);
+  }
+  .count-input:focus { outline: none; border-color: var(--accent); }
+
+  /* ── Dynamic Table ── */
+  .dyn-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+  .dyn-table th {
+    text-align: left; padding: 7px 10px;
+    font-family: var(--mono); font-size: 0.72rem; font-weight: 600;
+    color: var(--text2); border-bottom: 1.5px solid var(--border);
+    background: var(--surface2);
+  }
+  .dyn-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .dyn-table tr:last-child td { border-bottom: none; }
+
+  .tin {
+    width: 100%; padding: 5px 8px;
+    border: 1.5px solid var(--border); border-radius: 4px;
+    font-family: var(--mono); font-size: 0.84rem;
+    background: var(--bg); color: var(--text);
+    transition: border-color .15s;
+  }
+  .tin:focus { outline: none; border-color: var(--accent2); }
+  .tin.err { border-color: var(--accent) !important; background: #fff0ee; }
+
+  .btn-del {
+    background: none; border: 1.5px solid var(--border);
+    border-radius: 4px; cursor: pointer; padding: 4px 8px;
+    color: var(--accent); font-size: 0.85rem; font-weight: 600;
+    transition: background .15s;
+  }
+  .btn-del:hover { background: #fff0ee; }
+
+  .btn-add {
+    margin-top: 12px;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: 4px;
+    border: 1.5px solid var(--border);
+    background: var(--surface2); cursor: pointer;
+    font-family: var(--sans); font-size: 0.83rem; font-weight: 600;
+    transition: background .15s;
+  }
+  .btn-add:hover { background: var(--border); }
+
+  /* ── Single Row Inputs ── */
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 0.8rem; font-weight: 600; color: var(--text2); }
+  .field .tin { width: 100%; }
+
+  /* ── Results Panel ── */
+  #results-panel { margin-top: 32px; }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px; margin-bottom: 24px;
+  }
+  .score-box {
+    border: 1.5px solid var(--border); border-radius: 8px;
+    padding: 18px 16px; background: var(--surface); text-align: center;
+  }
+  .score-box .label { font-family: var(--mono); font-size: 0.72rem; color: var(--text2); margin-bottom: 6px; }
+  .score-box .val { font-size: 2rem; font-weight: 800; line-height: 1; }
+  .score-box .sub { font-family: var(--mono); font-size: 0.75rem; color: var(--text2); margin-top: 4px; }
+  .score-box.main { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .score-box.main .label, .score-box.main .sub { color: #aaa; }
+  .score-box.theory-box .val { color: var(--theory); }
+  .score-box.lab-box .val { color: var(--lab); }
+
+  /* Grade badge */
+  .grade-display {
+    display: inline-block; font-size: 2.5rem; font-weight: 800;
+    padding: 6px 20px; border-radius: 6px;
+    background: var(--text); color: var(--bg);
+  }
+
+  /* Breakdown table */
+  .breakdown { width: 100%; border-collapse: collapse; font-size: 0.86rem; margin-top: 8px; }
+  .breakdown th {
+    text-align: left; padding: 8px 10px;
+    font-family: var(--mono); font-size: 0.72rem; color: var(--text2);
+    border-bottom: 1.5px solid var(--border); background: var(--surface2);
+  }
+  .breakdown td { padding: 7px 10px; border-bottom: 1px solid var(--border); }
+  .breakdown tr:last-child td { border-bottom: none; font-weight: 600; }
+
+  /* Progress bar */
+  .pbar-wrap { background: var(--surface2); border-radius: 4px; overflow: hidden; height: 8px; margin-top: 6px; }
+  .pbar { height: 100%; border-radius: 4px; transition: width .5s ease; }
+  .pbar.theory { background: var(--theory); }
+  .pbar.lab { background: var(--lab); }
+  .pbar.overall { background: var(--text); }
+
+  /* ── Target Predictor ── */
+  .predictor-wrap { margin-top: 8px; }
+  .predictor-input-row { display: flex; gap: 12px; align-items: flex-end; margin-bottom: 20px; flex-wrap: wrap; }
+  .predictor-input-row .field { flex: 1; min-width: 140px; }
+
+  .target-result {
+    padding: 14px 16px; border-radius: 6px;
+    font-family: var(--mono); font-size: 0.88rem;
+    margin-bottom: 16px; line-height: 1.6;
+    border: 1.5px solid var(--border);
+    background: var(--surface2);
+  }
+  .target-result.ok { border-color: var(--success); background: #f0fff0; color: var(--success); }
+  .target-result.warn { border-color: var(--warn); background: #fffbeb; color: var(--warn); }
+  .target-result.bad { border-color: var(--accent); background: #fff0ee; color: var(--accent); }
+
+  /* Quick table */
+  .qtable { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+  .qtable th {
+    padding: 8px 12px; font-family: var(--mono); font-size: 0.72rem;
+    text-align: left; background: var(--surface2);
+    border-bottom: 1.5px solid var(--border); color: var(--text2);
+  }
+  .qtable td { padding: 8px 12px; border-bottom: 1px solid var(--border); font-family: var(--mono); }
+  .qtable tr:last-child td { border-bottom: none; }
+  .qtable .possible { color: var(--success); font-weight: 600; }
+  .qtable .impossible { color: var(--accent); }
+
+  /* Grade table */
+  .gtable { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .gtable th {
+    padding: 7px 12px; font-family: var(--mono); font-size: 0.72rem;
+    text-align: left; background: var(--surface2);
+    border-bottom: 1.5px solid var(--border); color: var(--text2);
+  }
+  .gtable td { padding: 7px 12px; border-bottom: 1px solid var(--border); font-family: var(--mono); }
+  .gtable tr:last-child td { border-bottom: none; }
+  .gtable tr.active-grade td { background: var(--text); color: var(--bg); font-weight: 600; }
+
+  /* ── Buttons ── */
+  .btn-calc {
+    display: block; width: 100%; padding: 14px;
+    background: var(--text); color: var(--bg);
+    border: none; border-radius: 6px; cursor: pointer;
+    font-family: var(--sans); font-size: 1rem; font-weight: 800;
+    letter-spacing: 0.5px; margin: 24px 0 0;
+    transition: opacity .15s;
+  }
+  .btn-calc:hover { opacity: .85; }
+
+  .export-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+  .btn-export {
+    padding: 9px 18px; border: 1.5px solid var(--border);
+    border-radius: 4px; background: var(--surface);
+    font-family: var(--sans); font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; transition: background .15s;
+  }
+  .btn-export:hover { background: var(--surface2); }
+  .btn-export.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn-export.primary:hover { opacity: .85; }
+
+  /* ── Validation message ── */
+  .valmsg { font-size: 0.75rem; color: var(--accent); margin-top: 3px; font-family: var(--mono); display: none; }
+  .valmsg.show { display: block; }
+
+  /* ── Section title ── */
+  .sec-title {
+    font-size: 1.3rem; font-weight: 800; margin: 32px 0 16px;
+    padding-bottom: 8px; border-bottom: 2px solid var(--text);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sec-title span { font-family: var(--mono); font-size: 0.75rem; font-weight: 400; color: var(--text2); }
+
+  /* Hidden */
+  .hidden { display: none !important; }
+
+  /* Scroll hint */
+  @media(max-width:480px){
+    .dyn-table-wrap { overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>University Marks Calculator</h1>
+  <span>Target Score Predictor &amp; Grade Estimator</span>
+</header>
+
+<div class="container">
+
+  <!-- Weightage strip -->
+  <div class="weight-strip">
+    <div class="ws-cell ws-theory"><div>Theory Weight</div><strong>67%</strong></div>
+    <div class="ws-cell"><div>Mid</div><strong>25</strong></div>
+    <div class="ws-cell"><div>Quizzes</div><strong>15</strong></div>
+    <div class="ws-cell"><div>Assignments</div><strong>10</strong></div>
+    <div class="ws-cell"><div>Final</div><strong>50</strong></div>
+  </div>
+  <div class="weight-strip" style="margin-top:-14px">
+    <div class="ws-cell ws-lab"><div>Lab Weight</div><strong>33%</strong></div>
+    <div class="ws-cell"><div>Lab Mid</div><strong>25</strong></div>
+    <div class="ws-cell"><div>Lab Assignments</div><strong>25</strong></div>
+    <div class="ws-cell"><div>Lab Final</div><strong>50</strong></div>
+  </div>
+
+  <!-- ========== THEORY ========== -->
+  <div class="sec-title">Theory <span>67% of overall</span></div>
+
+  <div class="grid-2">
+
+    <!-- Theory Mid -->
+    <div class="card">
+      <div class="card-head">
+        <h2>Theory Mid</h2>
+        <span class="badge theory">25 marks</span>
+      </div>
+      <div class="card-body">
+        <div class="row-2">
+          <div class="field">
+            <label>Obtained Marks</label>
+            <input class="tin" type="number" id="mid-obt" min="0" placeholder="e.g. 20">
+            <div class="valmsg" id="mid-obt-err"></div>
+          </div>
+          <div class="field">
+            <label>Total Marks</label>
+            <input class="tin" type="number" id="mid-tot" min="1" placeholder="e.g. 30">
+            <div class="valmsg" id="mid-tot-err"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Theory Final -->
+    <div class="card">
+      <div class="card-head">
+        <h2>Theory Final Exam</h2>
+        <span class="badge theory">50 marks</span>
+      </div>
+      <div class="card-body">
+        <div class="row-2">
+          <div class="field">
+            <label>Obtained Marks <span style="color:var(--text2);font-weight:400">(optional)</span></label>
+            <input class="tin" type="number" id="tfin-obt" min="0" placeholder="leave blank if not done">
+            <div class="valmsg" id="tfin-obt-err"></div>
+          </div>
+          <div class="field">
+            <label>Total Marks</label>
+            <input class="tin" type="number" id="tfin-tot" min="1" placeholder="e.g. 100">
+            <div class="valmsg" id="tfin-tot-err"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /grid-2 -->
+
+  <!-- Quizzes -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Theory Quizzes</h2>
+      <span class="badge theory">15 marks</span>
+    </div>
+    <div class="card-body">
+      <div class="count-row">
+        <label>Number of quizzes:</label>
+        <input class="count-input" type="number" id="quiz-count" min="0" max="20" value="0">
+      </div>
+      <div class="dyn-table-wrap">
+        <table class="dyn-table" id="quiz-table">
+          <thead>
+            <tr>
+              <th>Quiz Name</th>
+              <th>Obtained</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="quiz-body"></tbody>
+        </table>
+      </div>
+      <button class="btn-add" onclick="addRow('quiz')">＋ Add Quiz</button>
+    </div>
+  </div>
+
+  <!-- Assignments -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Theory Assignments</h2>
+      <span class="badge theory">10 marks</span>
+    </div>
+    <div class="card-body">
+      <div class="count-row">
+        <label>Number of assignments:</label>
+        <input class="count-input" type="number" id="asgn-count" min="0" max="20" value="0">
+      </div>
+      <div class="dyn-table-wrap">
+        <table class="dyn-table" id="asgn-table">
+          <thead>
+            <tr>
+              <th>Assignment Name</th>
+              <th>Obtained</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="asgn-body"></tbody>
+        </table>
+      </div>
+      <button class="btn-add" onclick="addRow('asgn')">＋ Add Assignment</button>
+    </div>
+  </div>
+
+  <!-- ========== LAB ========== -->
+  <div class="sec-title">Lab <span>33% of overall</span></div>
+
+  <div class="grid-2">
+
+    <!-- Lab Mid -->
+    <div class="card">
+      <div class="card-head">
+        <h2>Lab Mid</h2>
+        <span class="badge lab">25 marks</span>
+      </div>
+      <div class="card-body">
+        <div class="row-2">
+          <div class="field">
+            <label>Obtained Marks</label>
+            <input class="tin" type="number" id="lmid-obt" min="0" placeholder="e.g. 18">
+            <div class="valmsg" id="lmid-obt-err"></div>
+          </div>
+          <div class="field">
+            <label>Total Marks</label>
+            <input class="tin" type="number" id="lmid-tot" min="1" placeholder="e.g. 25">
+            <div class="valmsg" id="lmid-tot-err"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lab Final -->
+    <div class="card">
+      <div class="card-head">
+        <h2>Lab Final</h2>
+        <span class="badge lab">50 marks</span>
+      </div>
+      <div class="card-body">
+        <div class="row-2">
+          <div class="field">
+            <label>Obtained Marks <span style="color:var(--text2);font-weight:400">(optional)</span></label>
+            <input class="tin" type="number" id="lfin-obt" min="0" placeholder="leave blank if not done">
+            <div class="valmsg" id="lfin-obt-err"></div>
+          </div>
+          <div class="field">
+            <label>Total Marks</label>
+            <input class="tin" type="number" id="lfin-tot" min="1" placeholder="e.g. 50">
+            <div class="valmsg" id="lfin-tot-err"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Lab Assignments -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Lab Assignments</h2>
+      <span class="badge lab">25 marks</span>
+    </div>
+    <div class="card-body">
+      <div class="count-row">
+        <label>Number of lab assignments:</label>
+        <input class="count-input" type="number" id="lasgn-count" min="0" max="20" value="0">
+      </div>
+      <div class="dyn-table-wrap">
+        <table class="dyn-table" id="lasgn-table">
+          <thead>
+            <tr>
+              <th>Lab Assignment Name</th>
+              <th>Obtained</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="lasgn-body"></tbody>
+        </table>
+      </div>
+      <button class="btn-add" onclick="addRow('lasgn')">＋ Add Lab Assignment</button>
+    </div>
+  </div>
+
+  <!-- Calculate Button -->
+  <button class="btn-calc" onclick="calculate()">Calculate My Marks →</button>
+
+  <!-- ========== RESULTS ========== -->
+  <div id="results-panel" class="hidden">
+
+    <div class="sec-title">Results</div>
+
+    <!-- Score boxes -->
+    <div class="score-grid">
+      <div class="score-box main">
+        <div class="label">OVERALL SCORE</div>
+        <div class="val" id="res-overall">—</div>
+        <div class="sub">out of 100</div>
+      </div>
+      <div class="score-box">
+        <div class="label">PERCENTAGE</div>
+        <div class="val" id="res-pct">—</div>
+        <div class="sub">%</div>
+      </div>
+      <div class="score-box theory-box">
+        <div class="label">THEORY SCORE</div>
+        <div class="val" id="res-theory">—</div>
+        <div class="sub">out of 100</div>
+      </div>
+      <div class="score-box lab-box">
+        <div class="label">LAB SCORE</div>
+        <div class="val" id="res-lab">—</div>
+        <div class="sub">out of 100</div>
+      </div>
+      <div class="score-box">
+        <div class="label">PREDICTED GRADE</div>
+        <div class="val"><span class="grade-display" id="res-grade">—</span></div>
+        <div class="sub" id="res-grade-range">—</div>
+      </div>
+    </div>
+
+    <!-- Progress bars -->
+    <div class="card">
+      <div class="card-head"><h2>Score Breakdown</h2></div>
+      <div class="card-body">
+        <table class="breakdown" id="breakdown-table"></table>
+      </div>
+    </div>
+
+    <!-- ========== TARGET PREDICTOR ========== -->
+    <div class="sec-title">Target Score Predictor</div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="predictor-wrap">
+          <div class="predictor-input-row">
+            <div class="field">
+              <label>Your Desired Overall Score (0–100)</label>
+              <input class="tin" type="number" id="target-score" min="0" max="100" placeholder="e.g. 85"
+                     oninput="updatePredictor()">
+            </div>
+          </div>
+          <div id="target-result-box" class="target-result hidden"></div>
+        </div>
+
+        <!-- Quick predictions -->
+        <table class="qtable" id="quick-table">
+          <thead>
+            <tr>
+              <th>Target Score</th>
+              <th>Required Theory Final (/50)</th>
+              <th>Required % in Final</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="quick-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Grade Table -->
+    <div class="sec-title">Grade Reference</div>
+    <div class="card">
+      <div class="card-body">
+        <table class="gtable" id="grade-table">
+          <thead>
+            <tr><th>Percentage</th><th>Grade</th></tr>
+          </thead>
+          <tbody id="grade-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Export -->
+    <div class="export-row">
+      <button class="btn-export primary" onclick="exportPDF()">⬇ Export PDF</button>
+      <button class="btn-export" onclick="window.print()">🖨 Print</button>
+    </div>
+
+  </div><!-- /results-panel -->
+
+</div><!-- /container -->
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA STORE
+// ═══════════════════════════════════════════════
+let rows = {
+  quiz:  [],   // [{name, obt, tot}]
+  asgn:  [],
+  lasgn: []
+};
+let calcResult = null; // last calculation result
+
+// Grade scale
+const GRADES = [
+  { min: 85,  label: 'A',  range: '85% and above' },
+  { min: 80,  label: 'A-', range: '80% – 84%' },
+  { min: 75,  label: 'B+', range: '75% – 79%' },
+  { min: 70,  label: 'B',  range: '70% – 74%' },
+  { min: 65,  label: 'C+', range: '65% – 69%' },
+  { min: 60,  label: 'C',  range: '60% – 64%' },
+  { min: 0,   label: 'F',  range: 'Below 60%' }
+];
+
+// ═══════════════════════════════════════════════
+// DYNAMIC ROWS
+// ═══════════════════════════════════════════════
+function addRow(type) {
+  rows[type].push({ name: '', obt: '', tot: '' });
+  renderRows(type);
+  saveLS();
+  syncCount(type);
+}
+
+function delRow(type, idx) {
+  rows[type].splice(idx, 1);
+  renderRows(type);
+  saveLS();
+  syncCount(type);
+}
+
+function renderRows(type) {
+  const tbody = document.getElementById(type + '-body');
+  tbody.innerHTML = '';
+  rows[type].forEach((r, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input class="tin" type="text" placeholder="Name (optional)"
+           value="${escHtml(r.name)}" oninput="updateRow('${type}',${i},'name',this.value)"></td>
+      <td><input class="tin" type="number" min="0" placeholder="0"
+           value="${r.obt}" oninput="updateRow('${type}',${i},'obt',this.value)"></td>
+      <td><input class="tin" type="number" min="1" placeholder="10"
+           value="${r.tot}" oninput="updateRow('${type}',${i},'tot',this.value)"></td>
+      <td><button class="btn-del" onclick="delRow('${type}',${i})">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function updateRow(type, idx, field, val) {
+  rows[type][idx][field] = val;
+  saveLS();
+}
+
+function syncCount(type) {
+  document.getElementById(type + '-count').value = rows[type].length;
+}
+
+// Count input → generate rows
+['quiz','asgn','lasgn'].forEach(type => {
+  document.getElementById(type + '-count').addEventListener('change', function() {
+    const n = Math.max(0, Math.min(20, parseInt(this.value) || 0));
+    this.value = n;
+    // add or remove
+    while (rows[type].length < n) rows[type].push({ name:'', obt:'', tot:'' });
+    while (rows[type].length > n) rows[type].pop();
+    renderRows(type);
+    saveLS();
+  });
+});
+
+// ═══════════════════════════════════════════════
+// VALIDATION HELPERS
+// ═══════════════════════════════════════════════
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showErr(id, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  document.getElementById(id.replace('-err',''))?.classList.add('err');
+}
+function clearErr(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('show');
+  document.getElementById(id.replace('-err',''))?.classList.remove('err');
+}
+
+function valPair(obtId, totId, label) {
+  clearErr(obtId+'-err'); clearErr(totId+'-err');
+  const obEl = document.getElementById(obtId);
+  const toEl = document.getElementById(totId);
+  const obVal = obEl.value.trim();
+  const toVal = toEl.value.trim();
+
+  // both blank = ok (optional field)
+  if (obVal === '' && toVal === '') return { skip: true };
+
+  const ob = parseFloat(obVal);
+  const to = parseFloat(toVal);
+
+  if (toVal === '' || isNaN(to) || to <= 0) {
+    showErr(totId+'-err', label + ': Total marks required (> 0)');
+    return null;
+  }
+  if (obVal === '' || isNaN(ob)) {
+    showErr(obtId+'-err', label + ': Obtained marks required');
+    return null;
+  }
+  if (ob < 0) { showErr(obtId+'-err', 'Cannot be negative'); return null; }
+  if (ob > to) { showErr(obtId+'-err', 'Obtained > Total!'); return null; }
+  return { ob, to };
+}
+
+// Validate dynamic rows
+function valRows(type, label) {
+  let totObt = 0, totTot = 0, ok = true;
+  rows[type].forEach((r, i) => {
+    const ob = parseFloat(r.obt);
+    const to = parseFloat(r.tot);
+    const el = document.querySelector(`#${type}-body tr:nth-child(${i+1}) input[type=number]`);
+    if (r.obt === '' || r.tot === '') return; // skip blank rows silently
+    if (isNaN(ob) || isNaN(to) || to <= 0) { ok = false; return; }
+    if (ob < 0 || ob > to) { ok = false; return; }
+    totObt += ob; totTot += to;
+  });
+  return { totObt, totTot, ok };
+}
+
+// ═══════════════════════════════════════════════
+// CORE CALCULATION
+// ═══════════════════════════════════════════════
+function calculate() {
+  let valid = true;
+
+  // Theory Mid
+  const mid = valPair('mid-obt','mid-tot','Theory Mid');
+  if (mid === null) valid = false;
+
+  // Theory Final (optional)
+  const tfin = valPair('tfin-obt','tfin-tot','Theory Final');
+  if (tfin === null) valid = false;
+
+  // Lab Mid
+  const lmid = valPair('lmid-obt','lmid-tot','Lab Mid');
+  if (lmid === null) valid = false;
+
+  // Lab Final (optional)
+  const lfin = valPair('lfin-obt','lfin-tot','Lab Final');
+  if (lfin === null) valid = false;
+
+  // Quizzes
+  const qv = valRows('quiz','Quiz');
+  const av = valRows('asgn','Assignment');
+  const lav = valRows('lasgn','Lab Assignment');
+  if (!qv.ok || !av.ok || !lav.ok) valid = false;
+
+  if (!valid) {
+    alert('Please fix the errors highlighted in red before calculating.');
+    return;
+  }
+
+  // ── Compute scores ──────────────────────────
+  // Quiz score /15
+  let quizScore = 0;
+  if (qv.totTot > 0) quizScore = (qv.totObt / qv.totTot) * 15;
+
+  // Assignment score /10
+  let asgnScore = 0;
+  if (av.totTot > 0) asgnScore = (av.totObt / av.totTot) * 10;
+
+  // Theory Mid /25
+  let midScore = 0;
+  if (mid && !mid.skip) midScore = (mid.ob / mid.to) * 25;
+
+  // Theory Final /50
+  let tfinScore = 0;
+  let tfinAttempted = false;
+  let tfinTotal = 100; // default
+  if (tfin && !tfin.skip) {
+    tfinScore = (tfin.ob / tfin.to) * 50;
+    tfinAttempted = true;
+    tfinTotal = tfin.to;
+  }
+
+  const theoryTotal = quizScore + asgnScore + midScore + tfinScore;
+
+  // Lab Assignments /25
+  let laScore = 0;
+  if (lav.totTot > 0) laScore = (lav.totObt / lav.totTot) * 25;
+
+  // Lab Mid /25
+  let lmidScore = 0;
+  if (lmid && !lmid.skip) lmidScore = (lmid.ob / lmid.to) * 25;
+
+  // Lab Final /50
+  let lfinScore = 0;
+  let lfinAttempted = false;
+  if (lfin && !lfin.skip) {
+    lfinScore = (lfin.ob / lfin.to) * 50;
+    lfinAttempted = true;
+  }
+
+  const labTotal = laScore + lmidScore + lfinScore;
+
+  // Overall
+  const overall = (theoryTotal * 0.67) + (labTotal * 0.33);
+  const pct = overall; // already /100 scale
+
+  // Grade
+  const grade = getGrade(pct);
+
+  calcResult = {
+    quizScore, asgnScore, midScore, tfinScore, tfinAttempted,
+    theoryTotal,
+    laScore, lmidScore, lfinScore, lfinAttempted,
+    labTotal,
+    overall, pct, grade,
+    tfinTotal,
+    tfin, mid, lmid, lfin,
+    qv, av, lav
+  };
+
+  renderResults(calcResult);
+  saveLS();
+}
+
+// ═══════════════════════════════════════════════
+// RENDER RESULTS
+// ═══════════════════════════════════════════════
+function getGrade(pct) {
+  for (const g of GRADES) if (pct >= g.min) return g;
+  return GRADES[GRADES.length - 1];
+}
+
+function fmt(n) { return n.toFixed(2); }
+
+function renderResults(r) {
+  document.getElementById('results-panel').classList.remove('hidden');
+
+  document.getElementById('res-overall').textContent  = fmt(r.overall);
+  document.getElementById('res-pct').textContent      = fmt(r.pct);
+  document.getElementById('res-theory').textContent   = fmt(r.theoryTotal);
+  document.getElementById('res-lab').textContent      = fmt(r.labTotal);
+  document.getElementById('res-grade').textContent    = r.grade.label;
+  document.getElementById('res-grade-range').textContent = r.grade.range;
+
+  // Breakdown table
+  const bt = document.getElementById('breakdown-table');
+  bt.innerHTML = `
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th>Score (out of weight)</th>
+        <th>Progress</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${bRow('Quizzes',       r.quizScore, 15,  'theory')}
+      ${bRow('Assignments',   r.asgnScore, 10,  'theory')}
+      ${bRow('Theory Mid',    r.midScore,  25,  'theory')}
+      ${bRow('Theory Final',  r.tfinScore, 50,  'theory', !r.tfinAttempted)}
+      ${bRow('Theory Total',  r.theoryTotal, 100,'overall')}
+      ${bRow('Lab Assignments', r.laScore, 25,  'lab')}
+      ${bRow('Lab Mid',       r.lmidScore, 25,  'lab')}
+      ${bRow('Lab Final',     r.lfinScore, 50,  'lab', !r.lfinAttempted)}
+      ${bRow('Lab Total',     r.labTotal,  100, 'overall')}
+      ${bRow('Overall Score', r.overall,   100, 'overall')}
+    </tbody>
+  `;
+
+  renderGradeTable(r.pct);
+  renderQuickTable();
+  updatePredictor();
+
+  document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth' });
+}
+
+function bRow(label, score, max, cls, skipped = false) {
+  const pct = max > 0 ? (score / max) * 100 : 0;
+  const display = skipped ? '(not attempted)' : `${fmt(score)} / ${max}`;
+  return `<tr>
+    <td>${label}</td>
+    <td style="font-family:var(--mono)">${display}</td>
+    <td style="min-width:100px">
+      <div class="pbar-wrap"><div class="pbar ${cls}" style="width:${Math.min(100,pct)}%"></div></div>
+    </td>
+  </tr>`;
+}
+
+function renderGradeTable(pct) {
+  const tbody = document.getElementById('grade-body');
+  tbody.innerHTML = '';
+  GRADES.forEach(g => {
+    const tr = document.createElement('tr');
+    if (pct >= g.min && (g === GRADES[GRADES.length-1] || pct < GRADES[GRADES.indexOf(g)-1]?.min || GRADES.indexOf(g) === 0)) {
+      // active grade
+      if (getGrade(pct).label === g.label) tr.classList.add('active-grade');
+    }
+    tr.innerHTML = `<td>${g.range}</td><td>${g.label}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// TARGET PREDICTOR
+// ═══════════════════════════════════════════════
+
+// Required theory final marks to reach desired overall
+// overall = (theoryTotal * 0.67) + (labTotal * 0.33)
+// theoryTotal = quizScore + asgnScore + midScore + tfinScore
+// tfinScore = (x / tfinTotal) * 50     ← x is what we solve for
+//
+// desired = (knownTheory + tfinScore) * 0.67 + labTotal * 0.33
+// tfinScore = (desired - knownOtherTheory * 0.67 - labTotal * 0.33) / 0.67
+// x = tfinScore * tfinTotal / 50
+
+function calcRequired(desired) {
+  if (!calcResult) return null;
+  const r = calcResult;
+
+  // Theory score excluding final
+  const knownTheory = r.quizScore + r.asgnScore + r.midScore;
+  // Lab part (fixed)
+  const labPart = r.labTotal * 0.33;
+
+  // desired = (knownTheory + tfinScore) * 0.67 + labPart
+  const tfinScoreNeeded = (desired - labPart) / 0.67 - knownTheory;
+
+  // tfinScore = (x / tfinTotal) * 50  →  x = tfinScoreNeeded * tfinTotal / 50
+  const tfinTotal = (calcResult.tfin && !calcResult.tfin.skip) ? calcResult.tfin.to : 100;
+  const marksNeeded = (tfinScoreNeeded / 50) * tfinTotal;
+  const pctNeeded = (marksNeeded / tfinTotal) * 100;
+
+  return { marksNeeded, pctNeeded, tfinTotal, tfinScoreNeeded };
+}
+
+function updatePredictor() {
+  if (!calcResult) return;
+
+  const inp = document.getElementById('target-score').value.trim();
+  const box = document.getElementById('target-result-box');
+
+  if (inp !== '') {
+    const desired = parseFloat(inp);
+    if (isNaN(desired) || desired < 0 || desired > 100) {
+      box.className = 'target-result warn';
+      box.textContent = 'Please enter a valid score between 0 and 100.';
+      box.classList.remove('hidden');
+    } else {
+      const res = calcRequired(desired);
+      box.classList.remove('hidden');
+
+      if (calcResult.overall >= desired) {
+        box.className = 'target-result ok';
+        box.textContent = `✓ Target already achieved! Your current score (${fmt(calcResult.overall)}) meets the target of ${desired}.`;
+      } else if (res.marksNeeded > res.tfinTotal) {
+        box.className = 'target-result bad';
+        box.textContent = `✗ Target of ${desired} is NOT achievable. You would need ${fmt(res.marksNeeded)} / ${res.tfinTotal} in the Theory Final (${fmt(res.pctNeeded)}%), which exceeds the maximum.`;
+      } else if (res.marksNeeded < 0) {
+        box.className = 'target-result ok';
+        box.textContent = `✓ Already achievable without any Theory Final marks. Your non-final components are sufficient.`;
+      } else {
+        box.className = 'target-result warn';
+        box.innerHTML = `You need <strong>${fmt(res.marksNeeded)} / ${res.tfinTotal}</strong> in the Theory Final Exam (${fmt(res.pctNeeded)}%) to reach an overall score of <strong>${desired}</strong>.`;
+      }
+    }
+  } else {
+    box.classList.add('hidden');
+  }
+
+  renderQuickTable();
+}
+
+function renderQuickTable() {
+  const targets = [80, 85, 90, 95];
+  const tbody = document.getElementById('quick-body');
+  tbody.innerHTML = '';
+
+  targets.forEach(t => {
+    const tr = document.createElement('tr');
+    if (!calcResult) {
+      tr.innerHTML = `<td>${t}</td><td colspan="3" style="color:var(--text2);font-family:var(--mono)">—</td>`;
+    } else {
+      const res = calcRequired(t);
+      let marksCell, pctCell, statusCell;
+
+      if (calcResult.overall >= t) {
+        marksCell = `<span class="possible">—</span>`;
+        pctCell = `<span class="possible">—</span>`;
+        statusCell = `<span class="possible">✓ Already achieved</span>`;
+      } else if (res.marksNeeded < 0) {
+        marksCell = `<span class="possible">0</span>`;
+        pctCell = `<span class="possible">0%</span>`;
+        statusCell = `<span class="possible">✓ Achievable</span>`;
+      } else if (res.marksNeeded > res.tfinTotal) {
+        marksCell = `<span class="impossible">${fmt(res.marksNeeded)}</span>`;
+        pctCell = `<span class="impossible">${fmt(res.pctNeeded)}%</span>`;
+        statusCell = `<span class="impossible">✗ Not possible</span>`;
+      } else {
+        marksCell = `<span class="possible">${fmt(res.marksNeeded)}</span>`;
+        pctCell = `<span class="possible">${fmt(res.pctNeeded)}%</span>`;
+        statusCell = `<span class="possible">✓ Achievable</span>`;
+      }
+
+      tr.innerHTML = `<td style="font-weight:600">${t}</td><td>${marksCell}</td><td>${pctCell}</td><td>${statusCell}</td>`;
+    }
+    tbody.appendChild(tr);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// LOCAL STORAGE
+// ═══════════════════════════════════════════════
+const LS_KEY = 'umc_data_v2';
+
+function saveLS() {
+  const data = {
+    rows,
+    fields: {
+      'mid-obt': v('mid-obt'), 'mid-tot': v('mid-tot'),
+      'tfin-obt': v('tfin-obt'), 'tfin-tot': v('tfin-tot'),
+      'lmid-obt': v('lmid-obt'), 'lmid-tot': v('lmid-tot'),
+      'lfin-obt': v('lfin-obt'), 'lfin-tot': v('lfin-tot'),
+      'target-score': v('target-score')
+    }
+  };
+  localStorage.setItem(LS_KEY, JSON.stringify(data));
+}
+
+function v(id) { return document.getElementById(id)?.value || ''; }
+
+function loadLS() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.rows) {
+      rows = Object.assign({ quiz:[], asgn:[], lasgn:[] }, data.rows);
+    }
+    if (data.fields) {
+      Object.entries(data.fields).forEach(([id, val]) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val;
+      });
+    }
+    ['quiz','asgn','lasgn'].forEach(t => {
+      renderRows(t);
+      syncCount(t);
+    });
+  } catch(e) { console.warn('LS load failed', e); }
+}
+
+// Save on any input
+document.addEventListener('input', saveLS);
+
+// ═══════════════════════════════════════════════
+// PDF EXPORT
+// ═══════════════════════════════════════════════
+function exportPDF() {
+  if (!calcResult) { alert('Please calculate first.'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const r = calcResult;
+  let y = 18;
+  const lm = 15;
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.text('University Marks Calculator – Report', lm, y); y += 10;
+
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text(`Generated: ${new Date().toLocaleString()}`, lm, y); y += 10;
+
+  const line = (label, val) => {
+    doc.setFont('helvetica','bold');
+    doc.text(label + ':', lm, y);
+    doc.setFont('helvetica','normal');
+    doc.text(String(val), lm + 70, y);
+    y += 7;
+  };
+
+  doc.setFontSize(12);
+  doc.setFont('helvetica','bold');
+  doc.text('── Theory ──', lm, y); y += 8;
+  doc.setFontSize(10);
+  line('Quiz Score (/15)',        fmt(r.quizScore));
+  line('Assignment Score (/10)',  fmt(r.asgnScore));
+  line('Mid Score (/25)',         fmt(r.midScore));
+  line('Final Score (/50)',       r.tfinAttempted ? fmt(r.tfinScore) : 'Not attempted');
+  line('Theory Total (/100)',     fmt(r.theoryTotal));
+  y += 4;
+
+  doc.setFontSize(12);
+  doc.setFont('helvetica','bold');
+  doc.text('── Lab ──', lm, y); y += 8;
+  doc.setFontSize(10);
+  line('Lab Assignment (/25)',    fmt(r.laScore));
+  line('Lab Mid (/25)',           fmt(r.lmidScore));
+  line('Lab Final (/50)',         r.lfinAttempted ? fmt(r.lfinScore) : 'Not attempted');
+  line('Lab Total (/100)',        fmt(r.labTotal));
+  y += 4;
+
+  doc.setFontSize(12);
+  doc.setFont('helvetica','bold');
+  doc.text('── Overall ──', lm, y); y += 8;
+  doc.setFontSize(10);
+  line('Overall Score (/100)',    fmt(r.overall));
+  line('Percentage',              fmt(r.pct) + '%');
+  line('Grade',                   r.grade.label + ' (' + r.grade.range + ')');
+  y += 8;
+
+  doc.setFontSize(12);
+  doc.setFont('helvetica','bold');
+  doc.text('── Target Score Predictions ──', lm, y); y += 8;
+  doc.setFontSize(10);
+  [80,85,90,95].forEach(t => {
+    const res = calcRequired(t);
+    let status;
+    if (r.overall >= t) status = 'Already achieved';
+    else if (res.marksNeeded > res.tfinTotal) status = 'Not possible';
+    else if (res.marksNeeded < 0) status = 'Achievable (0 marks needed)';
+    else status = `Need ${fmt(res.marksNeeded)}/${res.tfinTotal} (${fmt(res.pctNeeded)}%)`;
+    line(`Target ${t}`, status);
+  });
+
+  doc.save('marks_report.pdf');
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+loadLS();
+renderQuickTable(); // empty state table
+</script>
+</body>
+</html>
