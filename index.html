@@ -278,6 +278,42 @@
   @media(max-width:480px){
     .dyn-table-wrap { overflow-x: auto; }
   }
+  /* Header Navigation */
+.header-nav{
+  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.header-link{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  transition: all .15s ease;
+}
+
+.header-link:hover{
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+
+.header-link.active{
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
 </style>
 </head>
 <body>
@@ -285,8 +321,17 @@
 <header>
   <h1>University Marks Calculator</h1>
   <span>Target Score Predictor &amp; Grade Estimator</span>
-</header>
 
+  <div class="header-nav">
+    <a href="index.html" class="header-link active">
+      🎓 Course Calculator
+    </a>
+
+    <a href="theory-calculator.html" class="header-link">
+      📘 Theory Calculator
+    </a>
+  </div>
+</header>
 <div class="container">
 
   <!-- Weightage strip -->
