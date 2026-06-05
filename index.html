@@ -2,71 +2,139 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Grade Calculator Dashboard</title>
+  <title>Course Calculator | GradeCalc</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; line-height: 1.5; }
-    nav { margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
-    nav a { margin-right: 15px; text-decoration: none; color: blue; }
-    .card { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
-    input[type="number"] { width: 60px; margin-right: 10px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { text-align: left; padding: 5px; border-bottom: 1px solid #eee; }
-    .error { color: red; font-size: 0.9em; }
-    button { padding: 5px 10px; cursor: pointer; }
-    .res-box { font-weight: bold; font-size: 1.2em; }
-    footer { margin-top: 30px; border-top: 1px solid #ccc; padding-top: 10px; text-align: center; font-size: 0.9em; color: #666; }
+    :root {
+      --primary: #4f46e5; --primary-hover: #4338ca;
+      --bg-color: #f3f4f6; --card-bg: #ffffff;
+      --text-main: #1f2937; --text-muted: #6b7280;
+      --border-color: #e5e7eb;
+    }
+    body {
+      font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-color); color: var(--text-main);
+      margin: 0; padding: 0; line-height: 1.5; display: flex; flex-direction: column; min-height: 100vh;
+    }
+    .navbar {
+      background: #ffffff; border-bottom: 1px solid var(--border-color); padding: 1rem 2rem;
+      display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .nav-brand { font-size: 1.25rem; font-weight: 700; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+    .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; flex: 1; width: 100%; box-sizing: border-box; }
+    .page-title { font-size: 1.875rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-main); }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .card-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; margin-top: 0; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+    .badge { font-size: 0.75rem; background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.5rem; border-radius: 9999px; font-weight: 600; }
+    .input-group { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+    input[type="number"] { border: 1px solid var(--border-color); border-radius: 0.375rem; padding: 0.5rem 0.75rem; font-size: 0.875rem; width: 80px; transition: all 0.2s; }
+    input[type="number"]:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+    .btn { background: var(--primary); color: white; border: none; border-radius: 0.375rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+    .btn:hover { background: var(--primary-hover); }
+    .btn-secondary { background: white; color: var(--text-main); border: 1px solid var(--border-color); }
+    .btn-secondary:hover { background: #f9fafb; }
+    .btn-danger { background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; padding: 0.35rem 0.6rem; }
+    .btn-danger:hover { background: #fecaca; }
+    .btn-block { display: block; width: 100%; padding: 0.875rem; font-size: 1rem; margin-top: 1rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    th, td { text-align: left; padding: 0.75rem; border-bottom: 1px solid var(--border-color); font-size: 0.875rem; }
+    th { background: #f9fafb; font-weight: 600; color: var(--text-muted); }
+    .error-msg { color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem; font-weight: 500; }
+    .results-card { background: linear-gradient(to right, #f8fafc, #f1f5f9); border-left: 4px solid var(--primary); display: none; }
+    .res-box { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+    .footer { background: #ffffff; border-top: 1px solid var(--border-color); padding: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.875rem; margin-top: auto; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
 
-<nav>
-  <strong>GradeCalc Dashboard</strong> &nbsp;&nbsp;
-  <a href="index.html">Full Course</a>
-  <a href="theory-calculator.html">Theory Only</a>
+<nav class="navbar">
+  <a href="index.html" class="nav-brand">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+    GradeCalc
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="active">Course Calculator</a>
+    <a href="theory-calculator.html">Theory Only</a>
+  </div>
 </nav>
 
-<h2>Full Course Calculator</h2>
+<div class="container">
+  <h1 class="page-title">Full Course Calculator</h1>
 
-<div class="card">
-  <h3>Theory (67%)</h3>
-  <div>Mid (25): <input type="number" id="t-mid-obt"> / <input type="number" id="t-mid-tot" value="30"></div>
-  <div>Final (50): <input type="number" id="t-fin-obt"> / <input type="number" id="t-fin-tot" value="100"></div>
-  
-  <h4>Quizzes (15%)</h4>
-  <button onclick="addRow('quiz')">+ Add Quiz</button>
-  <table id="quiz-table"><tr><th>Obtained</th><th>Total</th><th></th></tr><tbody id="quiz-body"></tbody></table>
-  
-  <h4>Assignments (10%)</h4>
-  <button onclick="addRow('asgn')">+ Add Assignment</button>
-  <table id="asgn-table"><tr><th>Obtained</th><th>Total</th><th></th></tr><tbody id="asgn-body"></tbody></table>
+  <div class="grid-2">
+    <div class="card">
+      <h2 class="card-title">Theory <span class="badge">67% Weight</span></h2>
+      <div class="input-group">
+        <span style="width: 80px;">Mid (25)</span> 
+        <input type="number" id="t-mid-obt" placeholder="Obt"> <span style="color: #9ca3af;">/</span> <input type="number" id="t-mid-tot" value="30" placeholder="Tot">
+      </div>
+      <div class="input-group">
+        <span style="width: 80px;">Final (50)</span> 
+        <input type="number" id="t-fin-obt" placeholder="Obt"> <span style="color: #9ca3af;">/</span> <input type="number" id="t-fin-tot" value="100" placeholder="Tot">
+      </div>
+      
+      <h3 style="font-size: 1rem; margin-top: 1.5rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+        Quizzes (15%) <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="addRow('quiz')">+ Add</button>
+      </h3>
+      <table id="quiz-table"><tr><th>Obtained</th><th>Total</th><th style="width: 40px;"></th></tr><tbody id="quiz-body"></tbody></table>
+      
+      <h3 style="font-size: 1rem; margin-top: 1.5rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+        Assignments (10%) <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="addRow('asgn')">+ Add</button>
+      </h3>
+      <table id="asgn-table"><tr><th>Obtained</th><th>Total</th><th style="width: 40px;"></th></tr><tbody id="asgn-body"></tbody></table>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Lab <span class="badge" style="background:#dcfce7; color:#166534;">33% Weight</span></h2>
+      <div class="input-group">
+        <span style="width: 80px;">Mid (25)</span> 
+        <input type="number" id="l-mid-obt" placeholder="Obt"> <span style="color: #9ca3af;">/</span> <input type="number" id="l-mid-tot" value="25" placeholder="Tot">
+      </div>
+      <div class="input-group">
+        <span style="width: 80px;">Final (50)</span> 
+        <input type="number" id="l-fin-obt" placeholder="Obt"> <span style="color: #9ca3af;">/</span> <input type="number" id="l-fin-tot" value="50" placeholder="Tot">
+      </div>
+      
+      <h3 style="font-size: 1rem; margin-top: 1.5rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+        Lab Asgn (25%) <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="addRow('lasgn')">+ Add</button>
+      </h3>
+      <table id="lasgn-table"><tr><th>Obtained</th><th>Total</th><th style="width: 40px;"></th></tr><tbody id="lasgn-body"></tbody></table>
+    </div>
+  </div>
+
+  <button class="btn btn-block" onclick="calculate()">Calculate My Marks</button>
+  <div id="error-msg" class="error-msg"></div>
+
+  <div id="results" class="card results-card" style="margin-top: 2rem;">
+    <h2 class="card-title">Results</h2>
+    <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem;">
+      <div>
+        <div style="color: var(--text-muted); font-size: 0.875rem; text-transform: uppercase; font-weight: 600;">Overall Score</div>
+        <div class="res-box"><span id="res-overall"></span> <span style="font-size: 1rem; color: var(--text-muted); font-weight: 500;">/ 100</span></div>
+      </div>
+      <div>
+        <div style="color: var(--text-muted); font-size: 0.875rem; text-transform: uppercase; font-weight: 600;">Grade</div>
+        <div class="res-box" id="res-grade"></div>
+      </div>
+    </div>
+    
+    <div style="border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+      <h3 style="font-size: 1rem; margin-top: 0; margin-bottom: 1rem;">Target Predictor</h3>
+      <div class="input-group">
+        <span>Desired Score:</span>
+        <input type="number" id="target" oninput="predict()" placeholder="e.g. 85">
+      </div>
+      <div id="pred-res" style="margin-top: 0.75rem; font-weight: 500; padding: 0.75rem; background: #fff; border-radius: 0.375rem; border: 1px solid var(--border-color);"></div>
+    </div>
+  </div>
 </div>
 
-<div class="card">
-  <h3>Lab (33%)</h3>
-  <div>Mid (25): <input type="number" id="l-mid-obt"> / <input type="number" id="l-mid-tot" value="25"></div>
-  <div>Final (50): <input type="number" id="l-fin-obt"> / <input type="number" id="l-fin-tot" value="50"></div>
-  
-  <h4>Lab Assignments (25%)</h4>
-  <button onclick="addRow('lasgn')">+ Add Lab Assignment</button>
-  <table id="lasgn-table"><tr><th>Obtained</th><th>Total</th><th></th></tr><tbody id="lasgn-body"></tbody></table>
-</div>
-
-<button onclick="calculate()" style="width: 100%; padding: 10px; background: #007bff; color: white; border: none; font-size: 1.1em; border-radius: 5px;">Calculate My Marks</button>
-<div id="error-msg" class="error"></div>
-
-<div id="results" class="card" style="display: none; margin-top: 20px; background: #f8f9fa;">
-  <h3>Results</h3>
-  <p>Overall Score: <span id="res-overall" class="res-box"></span> / 100</p>
-  <p>Grade: <span id="res-grade" class="res-box"></span></p>
-  
-  <hr style="margin: 15px 0; border: none; border-top: 1px solid #ccc;">
-  <h4>Target Predictor</h4>
-  Desired Score: <input type="number" id="target" oninput="predict()" placeholder="e.g. 85">
-  <div id="pred-res" style="margin-top: 10px; font-weight: 500;"></div>
-</div>
-
-<footer>
-  <p>&copy; 2026 GradeCalc. Minimal UI Version.</p>
+<footer class="footer">
+  <p>&copy; 2026 GradeCalc. Built for students.</p>
 </footer>
 
 <script>
@@ -91,9 +159,9 @@ function renderRows(type) {
   const tb = document.getElementById(type + '-body');
   tb.innerHTML = rows[type].map((r, i) => `
     <tr>
-      <td><input type="number" value="${r.obt}" oninput="rows['${type}'][${i}].obt=this.value; save()"></td>
-      <td><input type="number" value="${r.tot}" oninput="rows['${type}'][${i}].tot=this.value; save()"></td>
-      <td><button onclick="delRow('${type}', ${i})">X</button></td>
+      <td><input type="number" value="${r.obt}" oninput="rows['${type}'][${i}].obt=this.value; save()" placeholder="Obt"></td>
+      <td><input type="number" value="${r.tot}" oninput="rows['${type}'][${i}].tot=this.value; save()" placeholder="Tot"></td>
+      <td><button class="btn btn-danger" onclick="delRow('${type}', ${i})">✕</button></td>
     </tr>
   `).join('');
 }
@@ -149,16 +217,16 @@ function predict() {
   if (!calcRes) return;
   let tgt = val('target');
   let res = document.getElementById('pred-res');
-  if (!raw('target')) { res.innerText = ''; return; }
+  if (!raw('target')) { res.innerHTML = '<span style="color: var(--text-muted);">Enter a desired score to see predictions.</span>'; return; }
   
   let neededTh = (tgt - (calcRes.lTot * 0.33)) / 0.67;
   let neededTFinScore = neededTh - calcRes.thTotNoFin;
   let neededTFinMarks = (neededTFinScore / 50) * calcRes.tFinTot;
   
-  if (calcRes.overall >= tgt) res.innerText = "Already achieved! 🎉";
-  else if (neededTFinMarks > calcRes.tFinTot) res.innerText = "Impossible to achieve. ❌";
-  else if (neededTFinMarks < 0) res.innerText = "Already achievable without final! 🎉";
-  else res.innerText = `You need ${neededTFinMarks.toFixed(2)} / ${calcRes.tFinTot} in Theory Final to hit ${tgt}.`;
+  if (calcRes.overall >= tgt) res.innerHTML = "<span style='color: #059669;'>🎉 Already achieved!</span>";
+  else if (neededTFinMarks > calcRes.tFinTot) res.innerHTML = "<span style='color: #dc2626;'>❌ Impossible to achieve.</span>";
+  else if (neededTFinMarks < 0) res.innerHTML = "<span style='color: #059669;'>🎉 Already achievable without final!</span>";
+  else res.innerHTML = `You need <strong style="color: var(--primary);">${neededTFinMarks.toFixed(2)}</strong> / ${calcRes.tFinTot} in Theory Final to hit ${tgt}.`;
 }
 
 function save() {
@@ -180,6 +248,7 @@ function load() {
     }
   } catch(e) {}
   renderRows('quiz'); renderRows('asgn'); renderRows('lasgn');
+  if (document.getElementById('target').value) predict();
 }
 
 load();
