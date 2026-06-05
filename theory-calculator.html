@@ -5,18 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Theory Calculator | GradeCalc</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     :root {
       --primary: #6366f1; --primary-hover: #4f46e5; --primary-light: #e0e7ff;
       --bg-color: #f8fafc; --card-bg: #ffffff;
       --text-main: #0f172a; --text-muted: #64748b;
-      --border-color: #e2e8f0;
+      --border-color: #e2e8f0; --modal-bg: rgba(15, 23, 42, 0.5);
     }
     
     [data-theme="dark"] {
       --bg-color: #0f172a; --card-bg: #1e293b;
       --text-main: #f8fafc; --text-muted: #94a3b8;
-      --border-color: #334155; --primary-light: #312e81;
+      --border-color: #334155; --primary-light: #312e81; --modal-bg: rgba(0, 0, 0, 0.7);
     }
 
     body {
@@ -37,11 +38,13 @@
     
     .nav-brand { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; letter-spacing: -0.5px; }
     .nav-links { display: flex; gap: 0.5rem; align-items: center; }
-    .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 600; padding: 0.5rem 1rem; border-radius: 99px; transition: all 0.2s ease; }
+    .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 600; padding: 0.5rem 1rem; border-radius: 99px; transition: all 0.2s ease; cursor: pointer; }
     .nav-links a:hover { background: var(--primary-light); color: var(--primary); }
     .nav-links a.active { background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3); }
+    .nav-links .dash-btn { background: #10b981; color: white; margin-left: 0.5rem; }
+    .nav-links .dash-btn:hover { background: #059669; color: white; }
     
-    .theme-toggle { background: transparent; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; padding: 0.5rem; border-radius: 50%; transition: 0.2s; }
+    .theme-toggle { background: transparent; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; padding: 0.5rem; border-radius: 50%; transition: 0.2s; margin-left: 0.5rem; }
     .theme-toggle:hover { background: var(--border-color); color: var(--text-main); }
     
     .container { max-width: 700px; margin: 0 auto 3rem; padding: 0 1.5rem; flex: 1; width: 100%; box-sizing: border-box; }
@@ -54,23 +57,19 @@
       background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 1rem; padding: 2.5rem; margin-bottom: 2rem;
       box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); transition: transform 0.2s, box-shadow 0.2s, background 0.3s, border-color 0.3s;
     }
-    .card:hover { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05), 0 10px 10px -5px rgba(0,0,0,0.02); }
     .card-title { font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem; margin-top: 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 1rem; }
     .badge { font-size: 0.75rem; background: var(--primary-light); color: var(--primary); padding: 0.35rem 0.75rem; border-radius: 99px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
     
     .input-group { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; background: var(--bg-color); padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid var(--border-color); transition: background 0.3s; }
     .input-group span { font-weight: 600; color: var(--text-muted); width: 80px; }
     
-    input[type="number"] {
+    input[type="number"], input[type="text"] {
       border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.6rem 0.75rem; font-size: 1rem; width: 80px; transition: all 0.2s; background: var(--card-bg); font-weight: 600; text-align: center; color: var(--text-main);
     }
-    input[type="number"]::placeholder { font-weight: 400; color: var(--text-muted); }
-    input[type="number"]:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
+    input[type="number"]::placeholder, input[type="text"]::placeholder { font-weight: 400; color: var(--text-muted); }
+    input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
     
-    .btn {
-      background: linear-gradient(135deg, var(--primary) 0%, #818cf8 100%); color: white; border: none; border-radius: 0.75rem; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600;
-      cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3); display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;
-    }
+    .btn { background: linear-gradient(135deg, var(--primary) 0%, #818cf8 100%); color: white; border: none; border-radius: 0.75rem; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3); display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem; }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4); }
     .btn:active { transform: translateY(0); }
     .btn-secondary { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); box-shadow: 0 1px 2px rgba(0,0,0,0.05); padding: 0.4rem 0.8rem; font-size: 0.875rem; border-radius: 0.5rem; cursor: pointer; transition: 0.2s;}
@@ -95,42 +94,69 @@
     th:first-child { border-top-left-radius: 0.5rem; } th:last-child { border-top-right-radius: 0.5rem; }
     td { vertical-align: middle; }
     
-    .error-msg { color: #ef4444; font-size: 0.875rem; margin-top: 0.75rem; font-weight: 500; text-align: center; }
-    
     .results-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; border: none; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); display: none; margin-top: 3rem; }
     .results-card .card-title { color: white; border-bottom-color: rgba(255,255,255,0.1); }
     .res-label { color: #94a3b8; font-size: 0.875rem; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 0.5rem; }
-    .res-box { font-size: 3rem; font-weight: 800; color: #38bdf8; text-shadow: 0 2px 4px rgba(0,0,0,0.2); line-height: 1; }
     
+    /* Progress Ring CSS */
+    .progress-ring { width: 120px; height: 120px; position: relative; }
+    .progress-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .progress-ring circle { fill: none; stroke-width: 8; stroke-linecap: round; }
+    .progress-ring .bg { stroke: rgba(255,255,255,0.1); }
+    .progress-ring .progress { stroke: #38bdf8; stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s; }
+    .progress-ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+    .res-box { font-size: 2.2rem; font-weight: 800; color: white; line-height: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .res-box-sub { font-size: 0.875rem; color: #94a3b8; font-weight: 600; margin-top: 2px; }
+    .grade-display { font-size: 3rem; font-weight: 800; color: #a78bfa; text-shadow: 0 2px 4px rgba(0,0,0,0.2); line-height: 1; margin-bottom: 0.5rem; }
+
     .predictor-box { background: rgba(255,255,255,0.03); border-radius: 1rem; padding: 1.5rem; margin-top: 2rem; border: 1px solid rgba(255,255,255,0.05); }
-    .predictor-box input { background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.1); color: white; width: 100px; font-size: 1.125rem; }
+    .predictor-box input { background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.1); color: white; }
     .predictor-box input:focus { border-color: #38bdf8; box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2); }
-    .predictor-box input::placeholder { color: rgba(255,255,255,0.3); }
     
+    /* Dashboard Modal */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--modal-bg); backdrop-filter: blur(4px); z-index: 100; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
+    .modal-overlay.show { display: flex; opacity: 1; }
+    .modal-content { background: var(--card-bg); width: 100%; max-width: 600px; border-radius: 1.5rem; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); transform: translateY(20px); transition: transform 0.3s; border: 1px solid var(--border-color); max-height: 90vh; overflow-y: auto; }
+    .modal-overlay.show .modal-content { transform: translateY(0); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .modal-header h2 { margin: 0; color: var(--text-main); font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+    .close-btn { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+    .close-btn:hover { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
+    .cgpa-display { text-align: center; background: linear-gradient(135deg, var(--primary) 0%, #818cf8 100%); color: white; padding: 2rem; border-radius: 1rem; margin-bottom: 2rem; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3); }
+    .cgpa-display h3 { margin: 0 0 0.5rem; font-size: 1rem; font-weight: 600; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; }
+    .cgpa-display .cgpa-val { font-size: 3.5rem; font-weight: 800; line-height: 1; }
+    .course-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 1px solid var(--border-color); border-radius: 0.75rem; margin-bottom: 0.75rem; background: var(--bg-color); }
+    .course-info h4 { margin: 0 0 0.25rem; color: var(--text-main); font-size: 1.1rem; }
+    .course-info p { margin: 0; color: var(--text-muted); font-size: 0.875rem; font-weight: 500; }
+    .course-grade { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 1rem; }
+
     .footer { background: var(--card-bg); border-top: 1px solid var(--border-color); padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.875rem; margin-top: auto; transition: background 0.3s; }
     .sec-header { display: flex; justify-content: space-between; align-items: center; margin: 2.5rem 0 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px dashed var(--border-color); }
     .sec-header h3 { font-size: 1.125rem; margin: 0; color: var(--text-main); }
     
-    /* Loading Animation */
     @keyframes spin { 100% { transform: rotate(360deg); } }
     .spinner { animation: spin 1s linear infinite; display: none; }
     .btn.loading .spinner { display: inline-block; }
     .btn.loading .btn-text { display: none; }
     .btn.loading { pointer-events: none; opacity: 0.8; }
 
-    /* Print Styles */
+    #toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
+    .toast { background: var(--card-bg); color: var(--text-main); padding: 12px 20px; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); border-left: 4px solid var(--primary); display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 0.95rem; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .toast.show { transform: translateX(0); }
+    .toast.success { border-left-color: #10b981; }
+    .toast.error { border-left-color: #ef4444; }
+    [data-theme="dark"] .toast { border: 1px solid #334155; }
+
     @media print {
       body { background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; background-image: none !important; }
-      .navbar, .hero p, .actions-row, .btn-secondary, .btn-danger, .predictor-box, .footer, th:last-child, td:last-child { display: none !important; }
+      .navbar, .hero p, .actions-row, .btn-secondary, .btn-danger, .predictor-box, .footer, th:last-child, td:last-child, #toast-container, .modal-overlay { display: none !important; }
       .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
       .card { box-shadow: none !important; border: 1px solid #ccc !important; margin-bottom: 1rem !important; break-inside: avoid; padding: 1rem !important; background: white !important; }
       .results-card { background: white !important; border: 2px solid black !important; }
-      .results-card .card-title, .res-label, .res-box, .sec-header h3, .card-title { color: black !important; text-shadow: none !important; }
-      input[type="number"] { border: none !important; background: transparent !important; color: black !important; padding: 0 !important; text-align: left; }
-      .input-group { border: none !important; background: transparent !important; padding: 0 !important; margin-bottom: 0.25rem !important; }
+      .results-card .card-title, .res-label, .res-box, .res-box-sub, .grade-display, .sec-header h3, .card-title, .badge { color: black !important; text-shadow: none !important; }
+      .progress-ring .progress { stroke: black !important; }
+      input[type="number"], input[type="text"] { border: none !important; background: transparent !important; color: black !important; padding: 0 !important; text-align: left; }
     }
-
-    @media (max-width: 768px) { .hero h1 { font-size: 2rem; } }
   </style>
 </head>
 <body>
@@ -143,6 +169,10 @@
   <div class="nav-links">
     <a href="index.html">Course</a>
     <a href="theory-calculator.html" class="active">Theory</a>
+    <a onclick="openDashboard()" class="dash-btn">
+      <svg width="16" height="16" style="margin-right:4px; vertical-align:-3px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      Dashboard
+    </a>
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Dark Mode" id="theme-btn">
       <svg id="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
       <svg id="sun-icon" style="display: none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
@@ -194,7 +224,6 @@
       </span>
     </button>
   </div>
-  <div id="error-msg" class="error-msg"></div>
 
   <div id="results" class="card results-card">
     <div class="card-title">
@@ -204,18 +233,41 @@
         Save PDF
       </button>
     </div>
-    <div style="display: flex; flex-wrap: wrap; gap: 4rem; margin-bottom: 1rem; align-items: center;">
-      <div>
-        <div class="res-label">Theory Score</div>
-        <div class="res-box"><span id="res-overall"></span><span style="font-size: 1.25rem; color: #64748b; font-weight: 600; margin-left: 0.25rem;">/ 100</span></div>
+    <div style="display: flex; flex-wrap: wrap; gap: 4rem; margin-bottom: 2rem; align-items: center;">
+      
+      <div class="progress-ring">
+        <svg viewBox="0 0 100 100">
+          <circle class="bg" cx="50" cy="50" r="45"></circle>
+          <circle class="progress" id="ring-progress" cx="50" cy="50" r="45"></circle>
+        </svg>
+        <div class="progress-ring-text">
+          <div class="res-box" id="res-overall">0</div>
+          <div class="res-box-sub">/ 100</div>
+        </div>
       </div>
+
       <div>
         <div class="res-label">Predicted Grade</div>
-        <div class="res-box" id="res-grade" style="color: #a78bfa;"></div>
+        <div class="grade-display" id="res-grade"></div>
+        <div class="badge" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
+          GPA: <span id="res-gpa"></span>
+        </div>
       </div>
     </div>
     
-    <div class="predictor-box">
+    <div class="predictor-box" style="margin-top: 0; margin-bottom: 2rem; background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.2);">
+      <div class="res-label" style="color: white; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+        Save to Dashboard
+      </div>
+      <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <input type="text" id="save-course-name" placeholder="Course Name (e.g. Physics)" style="flex: 1; min-width: 150px; text-align: left;">
+        <input type="number" id="save-course-credits" placeholder="Credits" value="3" style="width: 80px;">
+        <button class="btn btn-secondary" onclick="saveToDashboard()" style="background: #10b981; color: white; border: none;">Save Course</button>
+      </div>
+    </div>
+
+    <div class="predictor-box" style="margin-top: 0;">
       <div class="res-label" style="color: white; margin-bottom: 1rem;">Target Predictor</div>
       <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
         <span style="font-weight: 500; color: #cbd5e1;">Desired Score:</span>
@@ -230,8 +282,31 @@
   <p>&copy; 2026 GradeCalc. Beautiful. Functional. Premium.</p>
 </footer>
 
+<div id="toast-container"></div>
+
+<!-- Dashboard Modal -->
+<div id="dashboard-modal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        Semester Dashboard
+      </h2>
+      <button class="close-btn" onclick="closeDashboard()">✕</button>
+    </div>
+    <div class="cgpa-display">
+      <h3>Cumulative GPA</h3>
+      <div class="cgpa-val" id="dash-cgpa">0.00</div>
+      <div style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;" id="dash-credits">0 Total Credits</div>
+    </div>
+    <div id="course-list">
+      <!-- Courses rendered here -->
+    </div>
+  </div>
+</div>
+
 <script>
-// Theme Logic
+// UI Elements Logic
 function toggleTheme() {
   const isDark = document.body.getAttribute('data-theme') === 'dark';
   document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
@@ -240,12 +315,100 @@ function toggleTheme() {
   localStorage.setItem('gradecalc_th_theme', isDark ? 'light' : 'dark');
 }
 
+function showToast(msg, type = 'success') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = type === 'success' 
+    ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>' + msg
+    : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>' + msg;
+  container.appendChild(toast);
+  setTimeout(() => toast.classList.add('show'), 10);
+  setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+function triggerConfetti() {
+  const duration = 3 * 1000; const end = Date.now() + duration;
+  (function frame() {
+    confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#6366f1', '#38bdf8', '#34d399'] });
+    confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#6366f1', '#38bdf8', '#34d399'] });
+    if (Date.now() < end) requestAnimationFrame(frame);
+  }());
+}
+
+// Dashboard Logic
+let savedCourses = JSON.parse(localStorage.getItem('gradecalc_semester')) || [];
+
+function saveToDashboard() {
+  if(!calcRes) return showToast("Calculate your score first!", "error");
+  const name = document.getElementById('save-course-name').value.trim();
+  const credits = parseFloat(document.getElementById('save-course-credits').value);
+  
+  if(!name) return showToast("Please enter a course name.", "error");
+  if(isNaN(credits) || credits <= 0) return showToast("Enter valid credit hours.", "error");
+  
+  const course = { id: Date.now(), name, credits, score: calcRes.overall, grade: calcRes.gradeObj.label, gpa: parseFloat(calcRes.gradeObj.gpa), color: calcRes.gradeObj.color };
+  savedCourses.push(course);
+  localStorage.setItem('gradecalc_semester', JSON.stringify(savedCourses));
+  showToast(`${name} saved to Dashboard!`);
+  document.getElementById('save-course-name').value = '';
+}
+
+function openDashboard() {
+  document.getElementById('dashboard-modal').classList.add('show');
+  renderDashboard();
+}
+
+function closeDashboard() {
+  document.getElementById('dashboard-modal').classList.remove('show');
+}
+
+function deleteCourse(id) {
+  savedCourses = savedCourses.filter(c => c.id !== id);
+  localStorage.setItem('gradecalc_semester', JSON.stringify(savedCourses));
+  renderDashboard();
+  showToast("Course removed.");
+}
+
+function renderDashboard() {
+  const list = document.getElementById('course-list');
+  if(savedCourses.length === 0) {
+    list.innerHTML = `<div style="text-align:center; color: var(--text-muted); padding: 2rem;">No courses saved yet. Calculate a score and save it to see your CGPA!</div>`;
+    document.getElementById('dash-cgpa').innerText = '0.00';
+    document.getElementById('dash-credits').innerText = '0 Total Credits';
+    return;
+  }
+  
+  let totalPoints = 0, totalCredits = 0;
+  list.innerHTML = savedCourses.map(c => {
+    totalPoints += (c.gpa * c.credits);
+    totalCredits += c.credits;
+    return `
+      <div class="course-item">
+        <div class="course-info">
+          <h4>${c.name}</h4>
+          <p>${c.credits} Credits • Score: ${c.score.toFixed(1)}%</p>
+        </div>
+        <div class="course-grade" style="color: ${c.color}">
+          ${c.grade}
+          <button class="btn-danger" style="margin-left: 1rem; width: 28px; height: 28px;" onclick="deleteCourse(${c.id})">✕</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  const cgpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : '0.00';
+  document.getElementById('dash-cgpa').innerText = cgpa;
+  document.getElementById('dash-credits').innerText = `${totalCredits} Total Credits`;
+}
+
 // Data Logic
 let rows = { quiz: [], asgn: [] };
 const GRADES = [
-  { min: 85, label: 'A' }, { min: 80, label: 'A-' }, { min: 75, label: 'B+' }, 
-  { min: 70, label: 'B' }, { min: 65, label: 'C+' }, { min: 60, label: 'C' }, 
-  { min: 0, label: 'F' }
+  { min: 85, label: 'A', gpa: '4.0', color: '#34d399' }, { min: 80, label: 'A-', gpa: '3.66', color: '#34d399' }, 
+  { min: 75, label: 'B+', gpa: '3.33', color: '#fbbf24' }, { min: 70, label: 'B', gpa: '3.0', color: '#fbbf24' }, 
+  { min: 65, label: 'C+', gpa: '2.66', color: '#fb923c' }, { min: 60, label: 'C', gpa: '2.0', color: '#fb923c' }, 
+  { min: 0, label: 'F', gpa: '0.0', color: '#f87171' }
 ];
 
 function addRow(type) { rows[type].push({ obt: '', tot: '10' }); renderRows(type); save(); }
@@ -264,11 +427,22 @@ function renderRows(type) {
 
 function sumRows(type) {
   let obt = 0, tot = 0;
-  for (let r of rows[type]) if (r.obt && r.tot) { obt += Number(r.obt); tot += Number(r.tot); }
+  for (let r of rows[type]) {
+    if (r.obt !== '' && r.tot !== '') {
+      const o = Number(r.obt), t = Number(r.tot);
+      if(o < 0 || t <= 0) throw "Marks must be positive numbers!";
+      if(o > t) throw "Obtained marks cannot be greater than total!";
+      obt += o; tot += t;
+    }
+  }
   return { obt, tot };
 }
 
-function val(id) { return Number(document.getElementById(id).value); }
+function val(id) { 
+  const v = Number(document.getElementById(id).value); 
+  if(v < 0) throw "Marks must be positive!";
+  return v;
+}
 function raw(id) { return document.getElementById(id).value; }
 
 function clearData() {
@@ -282,6 +456,7 @@ function clearData() {
   renderRows('quiz'); renderRows('asgn');
   document.getElementById('results').style.display = 'none';
   save();
+  showToast('All data cleared');
 }
 
 let calcRes = null;
@@ -289,45 +464,53 @@ let calcRes = null;
 function triggerCalculate() {
   const btn = document.getElementById('calc-btn');
   btn.classList.add('loading');
-  setTimeout(() => {
-    calculate();
-    btn.classList.remove('loading');
-  }, 400); // 400ms premium micro-interaction
+  setTimeout(() => { 
+    try { calculate(); } 
+    catch(e) { showToast(e, "error"); }
+    btn.classList.remove('loading'); 
+  }, 400); 
 }
 
 function calculate() {
-  document.getElementById('error-msg').innerText = '';
-  
   let q = sumRows('quiz'), a = sumRows('asgn');
   
+  if(raw('mid-obt') && val('mid-obt') > val('mid-tot')) throw "Mid obtained cannot exceed total!";
+  if(raw('fin-obt') && val('fin-obt') > val('fin-tot')) throw "Final obtained cannot exceed total!";
+
   let mid = raw('mid-obt') ? (val('mid-obt') / val('mid-tot')) * 25 : 0;
   let fin = raw('fin-obt') ? (val('fin-obt') / val('fin-tot')) * 50 : 0;
   let qSc = q.tot ? (q.obt / q.tot) * 15 : 0;
   let aSc = a.tot ? (a.obt / a.tot) * 10 : 0;
   let overall = mid + fin + qSc + aSc;
 
-  let grade = GRADES.find(g => overall >= g.min).label;
+  if(isNaN(overall)) overall = 0;
+  let gradeObj = GRADES.find(g => overall >= g.min) || GRADES[GRADES.length-1];
 
   document.getElementById('results').style.display = 'block';
-  document.getElementById('res-overall').innerText = overall.toFixed(2);
-  document.getElementById('res-grade').innerText = grade;
-
-  calcRes = { 
-    thTotNoFin: mid + qSc + aSc, 
-    finTot: val('fin-tot') || 50,
-    overall
-  };
+  document.getElementById('res-overall').innerText = overall.toFixed(1);
+  document.getElementById('res-grade').innerText = gradeObj.label;
+  document.getElementById('res-grade').style.color = gradeObj.color;
+  document.getElementById('res-gpa').innerText = gradeObj.gpa;
   
+  const ring = document.getElementById('ring-progress');
+  ring.style.stroke = gradeObj.color;
+  ring.style.strokeDashoffset = 283 - (283 * Math.min(overall, 100)) / 100;
+
+  if (overall >= 80) triggerConfetti();
+  showToast('Calculated Successfully!');
+
+  calcRes = { thTotNoFin: mid + qSc + aSc, finTot: val('fin-tot') || 50, overall, gradeObj };
   predict();
-  save();
+  save(false);
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function predict() {
   if (!calcRes) return;
-  let tgt = val('target');
+  let tgt = document.getElementById('target').value;
   let res = document.getElementById('pred-res');
-  if (!raw('target')) { res.innerHTML = '<span style="color: #94a3b8;">Enter a desired score to see predictions.</span>'; return; }
+  if (tgt === '' || tgt < 0) { res.innerHTML = '<span style="color: #94a3b8;">Enter a desired score to see predictions.</span>'; return; }
+  tgt = Number(tgt);
   
   let neededTFinScore = tgt - calcRes.thTotNoFin;
   let neededTFinMarks = (neededTFinScore / 50) * calcRes.finTot;
@@ -338,7 +521,7 @@ function predict() {
   else res.innerHTML = `You need <strong style="color: #38bdf8; font-size: 1.25em;">${neededTFinMarks.toFixed(2)}</strong> / ${calcRes.finTot} in the Final to hit ${tgt}.`;
 }
 
-function save() {
+function save(quiet = true) {
   let ids = ['mid-obt','mid-tot','fin-obt','fin-tot','target'];
   let data = { rows, fields: {} };
   ids.forEach(id => data.fields[id] = raw(id));
@@ -347,9 +530,7 @@ function save() {
 
 function load() {
   const savedTheme = localStorage.getItem('gradecalc_th_theme');
-  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    toggleTheme();
-  }
+  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) toggleTheme();
 
   try {
     let data = JSON.parse(localStorage.getItem('gradecalc_th_min'));
@@ -364,6 +545,11 @@ function load() {
 }
 
 load();
+
+window.onclick = function(event) {
+  const modal = document.getElementById('dashboard-modal');
+  if (event.target == modal) closeDashboard();
+}
 </script>
 </body>
 </html>
