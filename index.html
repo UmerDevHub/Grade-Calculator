@@ -3,536 +3,877 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Course Calculator | GradeCalc</title>
+  <title>CUI Wah Hub - Your Campus Companion</title>
+  <meta name="description" content="The ultimate solution for COMSATS University Lahore students. Calculate your GPA, track progress, and manage your degree.">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     :root {
-      --primary: #6366f1; --primary-hover: #4f46e5; --primary-light: #e0e7ff;
-      --bg-color: #f8fafc; --card-bg: #ffffff;
-      --text-main: #0f172a; --text-muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-dark: #1e3a8a;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
       --border-color: #e2e8f0;
+      --success: #10b981;
+      --success-light: #d1fae5;
     }
-    
-    [data-theme="dark"] {
-      --bg-color: #0f172a; --card-bg: #1e293b;
-      --text-main: #f8fafc; --text-muted: #94a3b8;
-      --border-color: #334155; --primary-light: #312e81;
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
-      font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-color);
-      background-image: radial-gradient(var(--border-color) 1px, transparent 1px); background-size: 24px 24px;
-      color: var(--text-main); margin: 0; padding: 0; line-height: 1.6;
-      display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s;
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
     }
-    
+
+    /* Navbar */
     .navbar {
-      background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-color); padding: 1rem 2rem;
-      display: flex; justify-content: space-between; align-items: center;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); position: sticky; top: 0; z-index: 100;
-      transition: background 0.3s, border-color 0.3s;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    [data-theme="dark"] .navbar { background: rgba(15, 23, 42, 0.85); }
     
-    .nav-brand { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; letter-spacing: -0.5px; }
-    .nav-links { display: flex; gap: 0.5rem; align-items: center; }
-    .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 600; padding: 0.5rem 1rem; border-radius: 99px; transition: all 0.2s ease; cursor: pointer; }
-    .nav-links a:hover { background: var(--primary-light); color: var(--primary); }
-    .nav-links a.active { background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3); }
-    .nav-links .dash-btn { background: #10b981; color: white; margin-left: 0.5rem; }
-    .nav-links .dash-btn:hover { background: #059669; color: white; }
-    
-    .theme-toggle { background: transparent; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; padding: 0.5rem; border-radius: 50%; transition: 0.2s; margin-left: 0.5rem; }
-    .theme-toggle:hover { background: var(--border-color); color: var(--text-main); }
-    
-    .container { max-width: 1400px; margin: 0 auto 3rem; padding: 0 2rem; flex: 1; width: 100%; box-sizing: border-box; }
-    
-    .hero { text-align: center; padding: 2.5rem 0 2rem; }
-    .hero h1 { font-size: 2.75rem; font-weight: 800; color: var(--text-main); margin: 0 0 0.5rem; letter-spacing: -1px; }
-    .hero p { color: var(--text-muted); font-size: 1.125rem; max-width: 600px; margin: 0 auto; }
+    .nav-brand {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      letter-spacing: -0.5px;
+    }
 
-    /* The 2-Column Grid */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 320px 1fr;
+    .nav-brand-icon {
+      background: linear-gradient(135deg, var(--primary) 0%, #60a5fa 100%);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+    }
+
+    .nav-links {
+      display: flex;
       gap: 2rem;
-      align-items: start;
+      align-items: center;
     }
 
-    .card {
-      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 1.5rem; padding: 2rem; margin-bottom: 2rem;
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); transition: transform 0.2s, box-shadow 0.2s, background 0.3s, border-color 0.3s;
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.2s;
     }
-    .card-title { font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem; margin-top: 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 1rem; }
-    .badge { font-size: 0.75rem; background: var(--primary-light); color: var(--primary); padding: 0.35rem 0.75rem; border-radius: 99px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-    .badge.lab { background: #dcfce7; color: #15803d; }
-    [data-theme="dark"] .badge.lab { background: #064e3b; color: #34d399; }
-    
-    .input-group { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; background: var(--bg-color); padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid var(--border-color); transition: background 0.3s; }
-    .input-group span { font-weight: 600; color: var(--text-muted); width: 80px; }
-    
-    input[type="number"], input[type="text"] {
-      border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.6rem 0.75rem; font-size: 1rem; width: 80px; transition: all 0.2s; background: var(--card-bg); font-weight: 600; text-align: center; color: var(--text-main);
-    }
-    input[type="number"]::placeholder, input[type="text"]::placeholder { font-weight: 400; color: var(--text-muted); }
-    input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
-    
-    .btn { background: linear-gradient(135deg, var(--primary) 0%, #818cf8 100%); color: white; border: none; border-radius: 0.75rem; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3); display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem; }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4); }
-    .btn-secondary { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); box-shadow: 0 1px 2px rgba(0,0,0,0.05); padding: 0.4rem 0.8rem; font-size: 0.875rem; border-radius: 0.5rem; cursor: pointer; transition: 0.2s;}
-    .btn-secondary:hover { background: var(--bg-color); transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    .btn-danger { background: #fee2e2; color: #ef4444; border: none; padding: 0.4rem; border-radius: 0.5rem; font-weight: bold; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; cursor: pointer;}
-    .btn-danger:hover { background: #fecaca; color: #b91c1c; transform: scale(1.05); }
-    [data-theme="dark"] .btn-danger { background: #450a0a; color: #f87171; }
-    [data-theme="dark"] .btn-danger:hover { background: #7f1d1d; }
-    
-    .btn-block { display: flex; width: 100%; padding: 1.25rem; font-size: 1.125rem; margin-top: 1rem; letter-spacing: 0.5px; border-radius: 1rem; }
-    
-    .actions-row { display: flex; gap: 1rem; margin-top: 1rem; }
-    .btn-clear { background: var(--card-bg); color: #ef4444; border: 1px solid var(--border-color); }
-    .btn-clear:hover { background: #fee2e2; border-color: #fca5a5; box-shadow: none; }
-    [data-theme="dark"] .btn-clear { background: var(--card-bg); color: #f87171; }
-    [data-theme="dark"] .btn-clear:hover { background: #450a0a; border-color: #7f1d1d; }
-    
-    table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1rem 0 1.5rem; }
-    th, td { text-align: left; padding: 0.875rem; border-bottom: 1px solid var(--border-color); }
-    th { background: var(--bg-color); font-weight: 600; color: var(--text-muted); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
-    th:first-child { border-top-left-radius: 0.5rem; } th:last-child { border-top-right-radius: 0.5rem; }
-    td { vertical-align: middle; }
-    
-    /* Live Results Right Panel */
-    .results-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; border: none; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); opacity: 0.5; filter: grayscale(1); transition: opacity 0.5s, filter 0.5s; padding: 2.5rem 1.5rem; text-align: center; }
-    .results-card.active { opacity: 1; filter: grayscale(0); }
-    .results-card .card-title { color: white; border-bottom-color: rgba(255,255,255,0.1); justify-content: center; }
-    .res-label { color: #94a3b8; font-size: 0.875rem; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 0.5rem; margin-top: 2rem; }
-    
-    .progress-ring { width: 160px; height: 160px; position: relative; margin: 0 auto; }
-    .progress-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-    .progress-ring circle { fill: none; stroke-width: 8; stroke-linecap: round; }
-    .progress-ring .bg { stroke: rgba(255,255,255,0.1); }
-    .progress-ring .progress { stroke: #38bdf8; stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s; }
-    .progress-ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
-    .res-box { font-size: 2.5rem; font-weight: 800; color: white; line-height: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-    .res-box-sub { font-size: 0.875rem; color: #94a3b8; font-weight: 600; margin-top: 4px; }
-    .grade-display { font-size: 3.5rem; font-weight: 800; color: #a78bfa; text-shadow: 0 2px 4px rgba(0,0,0,0.2); line-height: 1; margin-bottom: 1rem; }
 
-    .predictor-box { background: var(--card-bg); border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem; border: 1px solid var(--border-color); }
-    
-    .footer { background: var(--card-bg); border-top: 1px solid var(--border-color); padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.875rem; margin-top: auto; transition: background 0.3s; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-    .sec-header { display: flex; justify-content: space-between; align-items: center; margin: 1.5rem 0 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px dashed var(--border-color); }
-    .sec-header h3 { font-size: 1.125rem; margin: 0; color: var(--text-main); }
-    
-    @keyframes spin { 100% { transform: rotate(360deg); } }
-    .spinner { animation: spin 1s linear infinite; display: none; }
-    .btn.loading .spinner { display: inline-block; }
-    .btn.loading .btn-text { display: none; }
-    .btn.loading { pointer-events: none; opacity: 0.8; }
-
-    #toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
-    .toast { background: var(--card-bg); color: var(--text-main); padding: 12px 20px; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); border-left: 4px solid var(--primary); display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 0.95rem; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    .toast.show { transform: translateX(0); }
-    .toast.success { border-left-color: #10b981; }
-    .toast.error { border-left-color: #ef4444; }
-    [data-theme="dark"] .toast { border: 1px solid #334155; }
-
-    @media print {
-      body { background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; background-image: none !important; }
-      .navbar, .hero p, .actions-row, .btn-secondary, .btn-danger, .predictor-box, .footer, th:last-child, td:last-child, #toast-container, .left-panel { display: none !important; }
-      .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
-      .dashboard-grid { display: block !important; }
-      .card { box-shadow: none !important; border: 1px solid #ccc !important; margin-bottom: 1rem !important; break-inside: avoid; padding: 1rem !important; background: white !important; }
-      .results-card { background: white !important; border: 2px solid black !important; opacity: 1 !important; filter: none !important; }
-      .results-card .card-title, .res-label, .res-box, .res-box-sub, .grade-display, .sec-header h3, .card-title, .badge { color: black !important; text-shadow: none !important; }
-      .progress-ring .progress { stroke: black !important; }
-      input[type="number"], input[type="text"] { border: none !important; background: transparent !important; color: black !important; padding: 0 !important; text-align: left; width: auto !important;}
+    .nav-links a:hover {
+      color: var(--text-main);
     }
-    @media (max-width: 1200px) { 
-      .dashboard-grid { grid-template-columns: 280px 1fr; gap: 1rem; }
-      .grid-2 { grid-template-columns: 1fr; }
+
+    .nav-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
     }
-    @media (max-width: 900px) { 
-      .dashboard-grid { grid-template-columns: 1fr; }
-      .right-panel { position: static !important; }
+
+    .btn {
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      padding: 0.6rem 1.25rem;
+      border-radius: 0;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s ease-in-out;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-color);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      color: var(--text-main);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 6rem 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #eff6ff;
+      color: var(--primary);
+      padding: 0.5rem 1rem;
+      border-radius: 99px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      border: 1px solid #bfdbfe;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+      letter-spacing: -1.5px;
+    }
+    
+    .hero h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.5px;
+    }
+
+    .hero p {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      max-width: 90%;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+    }
+
+    .stat-item h4 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-item p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0;
+      font-weight: 600;
+    }
+
+    /* Hero Graphic (Mockup) */
+    .hero-graphic {
+      position: relative;
+      background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
+      border-radius: 0;
+      padding: 3rem;
+    }
+
+    .mockup-window {
+      background: var(--card-bg);
+      border-radius: 0;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .mockup-header {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .mockup-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .mockup-title {
+      font-weight: 700;
+      color: var(--text-main);
+      font-size: 1.1rem;
+      line-height: 1.2;
+    }
+
+    .mockup-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .mockup-body {
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .gpa-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: conic-gradient(var(--success) 0% 90%, #e2e8f0 90% 100%);
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .gpa-circle::before {
+      content: "";
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .gpa-value {
+      position: relative;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .status-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.35rem 0.85rem;
+      border-radius: 99px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-block;
+      margin-top: 1rem;
+    }
+
+    .status-available { background: var(--success-light); color: var(--success); }
+
+    /* Sections */
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-header h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 1rem;
+      letter-spacing: -0.5px;
+    }
+
+    .section-header p {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border-radius: 0;
+      border: 1px solid var(--border-color);
+      padding: 2.5rem;
+      transition: all 0.3s ease-in-out;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      border-color: var(--primary-light);
+    }
+
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      background: #eff6ff;
+      color: var(--primary);
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 1rem;
+    }
+
+    .feature-card p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      flex: 1;
+    }
+
+    .feature-link {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .feature-card:hover .feature-link {
+      gap: 0.5rem;
+    }
+
+    /* About Section */
+    .about-section {
+      padding: 6rem 0;
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .about-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    /* Contact Section */
+    .contact-section {
+      padding: 6rem 0;
+      background: var(--bg-color);
+    }
+
+    .contact-form {
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 3rem;
+      border-radius: 0;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0;
+      font-family: inherit;
+      font-size: 1rem;
+      color: var(--text-main);
+      background: var(--bg-color);
+      transition: all 0.3s ease-in-out;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    /* FAQ Section */
+    .faq-section {
+      padding: 6rem 0;
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .faq-question {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .faq-question:hover {
+      background: #f8fafc;
+    }
+
+    .faq-icon {
+      transition: transform 0.3s;
+      color: var(--text-muted);
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      padding: 0 1.5rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out, padding 0.3s ease;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .faq-item.active .faq-answer {
+      padding: 0 1.5rem 1.25rem;
+      max-height: 200px;
+    }
+
+    /* Footer */
+    .footer {
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      padding: 4rem 2rem 2rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      margin-bottom: 3rem;
+    }
+
+    .footer-col h4 {
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--text-main);
+    }
+
+    .footer-col p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--primary);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border-color);
+      padding-top: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 4rem 0;
+      }
+      .hero p { margin: 0 auto 2rem; }
+      .hero-actions { justify-content: center; }
+      .hero-stats { justify-content: center; }
+      .hero-graphic { margin-top: 2rem; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .nav-actions { gap: 0.5rem; }
+      .hero h1 { font-size: 2.5rem; }
+      .hero h2 { font-size: 1.5rem; }
+      .hero-stats { flex-direction: column; gap: 1rem; }
+      .footer-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-<nav class="navbar">
-  <a href="index.html" class="nav-brand">
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-    GradeCalc
-  </a>
-  <div class="nav-links">
-    <a href="index.html" class="active">Course</a>
-    <a href="theory-calculator.html">Theory</a>
-    <a href="dashboard.html" class="dash-btn">
-      <svg width="16" height="16" style="margin-right:4px; vertical-align:-3px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-      Dashboard
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+          <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+        </svg>
+      </div>
+      CUI Wah Hub
     </a>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Dark Mode">
-      <svg id="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-      <svg id="sun-icon" style="display: none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-    </button>
-  </div>
-</nav>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <a href="login.html" style="text-decoration:none; color:var(--text-main); font-weight:600; font-size:0.95rem; margin-right:0.5rem;">Sign In</a>
+      <a href="register.html" class="btn">Sign Up</a>
+    </div>
+  </nav>
 
-<div class="container expansive-container">
-  <div class="hero">
-    <h1>Calculate Your Future</h1>
-    <p>Enter your marks in the center panel. Your results and predictions will update live on the side.</p>
-  </div>
-
-  <div class="dashboard-grid">
-    
-    <!-- LEFT PANEL: Predictors & Dashboard Sync -->
-    <div class="side-panel left-panel">
-      <div class="card predictor-box" style="background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2);">
-        <div class="sec-header" style="margin-top:0; border-bottom-color: rgba(16, 185, 129, 0.2);">
-          <h2 style="font-size: 1.1rem; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-            Save to Dashboard
-          </h2>
-        </div>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Instantly save your calculated grade to your degree dashboard.</p>
-        <input type="text" id="save-course-name" placeholder="Course Name (e.g. Physics)" style="width: 100%; margin-bottom: 0.5rem; text-align: left;">
-        <input type="number" id="save-course-credits" placeholder="Credits" value="3" style="width: 100%; margin-bottom: 1rem; text-align: left;">
-        <button class="btn btn-secondary" onclick="saveToDashboard()" style="width: 100%; background: #10b981; color: white; border: none; font-weight: 600;">Save Course</button>
+  <!-- Hero Section -->
+  <section class="hero container">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Your Academic Partner
+      </div>
+      <h1>CUI Wah Hub</h1>
+      <h2>Your Campus Companion</h2>
+      <p>The ultimate toolkit for your degree. Accurately calculate course marks, predict finals, and track your cumulative GPA effortlessly.</p>
+      
+      <div class="hero-actions">
+        <a href="dashboard.html" class="btn">Dashboard</a>
+        <a href="#features" class="btn btn-outline">Explore Features &rarr;</a>
       </div>
 
-      <div class="card predictor-box">
-        <div class="sec-header" style="margin-top:0;">
-          <h2 style="font-size: 1.1rem; color: var(--text-main); margin: 0;">Target Predictor</h2>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <h4>1</h4>
+          <p>Active User</p>
         </div>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Find out what you need on the Final to reach a specific score.</p>
-        <span style="font-weight: 600; color: var(--text-main); font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Desired Total Score:</span>
-        <input type="number" id="target" oninput="predict()" placeholder="e.g. 85" style="width: 100%; text-align: left;">
-        <div id="pred-res" style="margin-top: 1rem; font-size: 0.95rem; font-weight: 500; color: var(--text-main); line-height: 1.5;">
-          Calculate marks first.
+        <div class="stat-item">
+          <h4>3</h4>
+          <p>Core Features</p>
+        </div>
+        <div class="stat-item">
+          <h4>24/7</h4>
+          <p>Available</p>
         </div>
       </div>
     </div>
 
-    <!-- CENTER PANEL: Inputs -->
-    <div class="main-panel center-panel">
-      <div class="grid-2">
-        <!-- Theory Card -->
-        <div class="card" style="margin-bottom: 0;">
-          <h2 class="card-title">Theory <span class="badge">67% Weight</span></h2>
-          <div class="input-group">
-            <span>Mid (25)</span> 
-            <input type="number" id="t-mid-obt" placeholder="Obt"> <span style="font-weight: 400; width: auto;">/</span> <input type="number" id="t-mid-tot" value="30" placeholder="Tot">
+    <div class="hero-graphic">
+      <div class="mockup-window">
+        <div class="mockup-header">
+          <div class="mockup-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
           </div>
-          <div class="input-group">
-            <span>Final (50)</span> 
-            <input type="number" id="t-fin-obt" placeholder="Obt"> <span style="font-weight: 400; width: auto;">/</span> <input type="number" id="t-fin-tot" value="100" placeholder="Tot">
-          </div>
-          
-          <div class="sec-header">
-            <h3>Quizzes (15%)</h3>
-            <button class="btn-secondary" onclick="addRow('quiz')">+ Add Quiz</button>
-          </div>
-          <table id="quiz-table"><tr><th>Obtained</th><th>Total</th><th style="width: 48px;"></th></tr><tbody id="quiz-body"></tbody></table>
-          
-          <div class="sec-header">
-            <h3>Assignments (10%)</h3>
-            <button class="btn-secondary" onclick="addRow('asgn')">+ Add Assignment</button>
-          </div>
-          <table id="asgn-table"><tr><th>Obtained</th><th>Total</th><th style="width: 48px;"></th></tr><tbody id="asgn-body"></tbody></table>
-        </div>
-
-        <!-- Lab Card -->
-        <div class="card" style="margin-bottom: 0;">
-          <h2 class="card-title">Lab <span class="badge lab">33% Weight</span></h2>
-          <div class="input-group">
-            <span>Mid (25)</span> 
-            <input type="number" id="l-mid-obt" placeholder="Obt"> <span style="font-weight: 400; width: auto;">/</span> <input type="number" id="l-mid-tot" value="25" placeholder="Tot">
-          </div>
-          <div class="input-group">
-            <span>Final (50)</span> 
-            <input type="number" id="l-fin-obt" placeholder="Obt"> <span style="font-weight: 400; width: auto;">/</span> <input type="number" id="l-fin-tot" value="50" placeholder="Tot">
-          </div>
-          
-          <div class="sec-header">
-            <h3>Lab Tasks (25%)</h3>
-            <button class="btn-secondary" onclick="addRow('lasgn')">+ Add Task</button>
-          </div>
-          <table id="lasgn-table"><tr><th>Obtained</th><th>Total</th><th style="width: 48px;"></th></tr><tbody id="lasgn-body"></tbody></table>
-        </div>
-      </div>
-
-      <div class="actions-row">
-        <button class="btn btn-clear" onclick="clearData()" style="flex: 1;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-          Clear All
-        </button>
-        <button class="btn btn-block" id="calc-btn" onclick="triggerCalculate()" style="flex: 2; margin-top: 0;">
-          <svg class="spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
-          <span class="btn-text" style="display:flex; align-items:center; gap:0.5rem;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-            Calculate My Marks
-          </span>
-        </button>
-      </div>
-
-      <!-- Live Results Box (Moved to Next Row) -->
-      <div id="results" class="card results-card" style="margin-top: 2rem; border-radius: 1.5rem;">
-        <h2 style="margin-top: 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.8; margin-bottom: 2rem;">Live Results</h2>
-        
-        <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 2rem;">
-          <div class="progress-ring">
-            <svg viewBox="0 0 100 100">
-              <circle class="bg" cx="50" cy="50" r="45"></circle>
-              <circle class="progress" id="ring-progress" cx="50" cy="50" r="45"></circle>
-            </svg>
-            <div class="progress-ring-text">
-              <div class="res-box" id="res-overall">0</div>
-              <div class="res-box-sub">/ 100</div>
-            </div>
-          </div>
-          
           <div>
-            <div class="res-label">Predicted Grade</div>
-            <div class="grade-display" id="res-grade">-</div>
-            <div class="badge" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 0.9rem; padding: 0.4rem 1rem; display: inline-block;">
-              GPA: <span id="res-gpa">0.00</span>
-            </div>
+            <div class="mockup-title">Degree Dashboard</div>
+            <div class="mockup-subtitle">Cumulative GPA Tracking</div>
+          </div>
+        </div>
+        <div class="mockup-body">
+          <div class="gpa-circle">
+            <span class="gpa-value">3.75</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">60 Credits Earned</p>
+          <span class="status-pill status-available">Status: Good Standing</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="container" style="padding-top: 4rem;">
+    <div class="section-header">
+      <h2>Powerful Features</h2>
+      <p>Everything you need to analyze your grades and target your desired GPA.</p>
+    </div>
+
+    <div class="features-grid">
+      <!-- Feature 1 -->
+      <div class="feature-card">
+        <div class="feature-icon" style="background: #e0e7ff; color: #4f46e5;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        </div>
+        <h3>Course Calculator</h3>
+        <p>Calculate marks for courses with both Theory (67%) and Lab (33%) components. Add midterms, finals, quizzes, and assignments.</p>
+        <a href="course-calculator.html" class="feature-link" style="margin-top: 1rem;">Try Course Calculator &rarr;</a>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="feature-card">
+        <div class="feature-icon" style="background: #fdf2f8; color: #db2777;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        </div>
+        <h3>Theory Calculator</h3>
+        <p>A streamlined calculator designed specifically for theory-only subjects. Predict the final exam marks needed to hit your target grade.</p>
+        <a href="theory-calculator.html" class="feature-link" style="margin-top: 1rem;">Try Theory Calculator &rarr;</a>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="feature-card">
+        <div class="feature-icon" style="background: #f0fdf4; color: #16a34a;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+        </div>
+        <h3>Degree Dashboard</h3>
+        <p>Save your calculated courses to the dashboard. Track your official COMSATS cumulative GPA across your entire degree.</p>
+        <a href="dashboard.html" class="feature-link" style="margin-top: 1rem;">Go to Dashboard &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Us Section -->
+  <section id="about" class="about-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>About CUI Wah Hub</h2>
+      </div>
+      <div class="about-content">
+        <p style="margin-bottom: 1.5rem;">
+          CUI Wah Hub is a dedicated, personalized tool built specifically for navigating the rigorous academic grading criteria at CUI Wah. Unlike generic calculators, this platform uses the exact official grading scales and weightage splits (such as the 67% theory and 33% lab distribution).
+        </p>
+        <p>
+          Designed as a single-user companion app, it securely stores your course data in your local browser, allowing you to track your cumulative degree progress semester by semester. It is your personal academic assistant to plan, predict, and achieve your target grades.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="contact-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Contact Us</h2>
+        <p>Have questions, feedback, or found a bug? Send a message.</p>
+      </div>
+      
+      <div class="contact-form">
+        <form onsubmit="event.preventDefault(); alert('Message sent successfully! (Frontend Only)');">
+          <div class="form-group">
+            <label for="name">Your Name</label>
+            <input type="text" id="name" placeholder="John Doe" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Your Email</label>
+            <input type="email" id="email" placeholder="student@cuilahore.edu.pk" required>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" rows="5" placeholder="How can we help you?" required></textarea>
+          </div>
+          <button type="submit" class="btn" style="width: 100%; justify-content: center; padding: 0.8rem;">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Frequently Asked Questions</h2>
+        <p>Quick answers to common questions about your grade calculator.</p>
+      </div>
+
+      <div class="faq-list">
+        <!-- FAQ 1 -->
+        <div class="faq-item">
+          <div class="faq-question">
+            Is the GPA calculator based on COMSATS criteria?
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <div class="faq-answer">
+            Yes, both the Course Calculator and the Degree Dashboard use the exact official COMSATS grading policy (e.g., A = 85+ / 4.00, C = 60+ / 2.00).
           </div>
         </div>
 
-        <button class="btn btn-secondary" onclick="window.print()" style="font-size: 0.85rem; padding: 0.5rem; color: #1e293b; display: flex; align-items: center; gap: 0.4rem; justify-content: center; width: 100%; max-width: 300px; margin: 3rem auto 0;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-          Print Report PDF
-        </button>
+        <!-- FAQ 2 -->
+        <div class="faq-item">
+          <div class="faq-question">
+            Where is my data saved?
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <div class="faq-answer">
+            Currently, all your courses and dashboard metrics are saved securely in your browser's local storage. This means your data is private to your device.
+          </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="faq-item">
+          <div class="faq-question">
+            Can I export my dashboard history?
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <div class="faq-answer">
+            Yes! Go to the Dashboard page and use the "Export Backup" button to save your entire degree history as a file.
+          </div>
+        </div>
       </div>
     </div>
+  </section>
 
-  </div>
-</div>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <a href="#" class="nav-brand" style="margin-bottom: 1rem;">
+          <div class="nav-brand-icon" style="width: 32px; height: 32px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+          </div>
+          CUI Wah Hub
+        </a>
+        <p>The ultimate toolkit designed specifically for tracking COMSATS grades and managing your degree.</p>
+      </div>
 
-<footer class="footer">
-  <p>&copy; 2026 GradeCalc. Beautiful. Functional. Premium.</p>
-</footer>
+      <div class="footer-col">
+        <h4>Features</h4>
+        <ul class="footer-links">
+          <li><a href="course-calculator.html">Course Calculator</a></li>
+          <li><a href="theory-calculator.html">Theory Calculator</a></li>
+          <li><a href="dashboard.html">Degree Dashboard</a></li>
+        </ul>
+      </div>
 
-<div id="toast-container"></div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <ul class="footer-links">
+          <li><a href="login.html">Sign In</a></li>
+          <li><a href="register.html">Sign Up</a></li>
+        </ul>
+      </div>
 
-<script>
-// UI Elements Logic
-function toggleTheme() {
-  const isDark = document.body.getAttribute('data-theme') === 'dark';
-  document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.getElementById('moon-icon').style.display = isDark ? 'block' : 'none';
-  document.getElementById('sun-icon').style.display = isDark ? 'none' : 'block';
-  localStorage.setItem('gradecalc_theme', isDark ? 'light' : 'dark');
-}
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul class="footer-links">
+          <li><a href="#">GitHub</a></li>
+          <li><a href="#">Support</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 CUI Wah Hub. Personal Academic Tool.</p>
+    </div>
+  </footer>
 
-function showToast(msg, type = 'success') {
-  const container = document.getElementById('toast-container');
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.innerHTML = type === 'success' 
-    ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>' + msg
-    : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>' + msg;
-  container.appendChild(toast);
-  setTimeout(() => toast.classList.add('show'), 10);
-  setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
-}
+  <script>
+    // FAQ Accordion Logic
+    document.querySelectorAll('.faq-question').forEach(item => {
+      item.addEventListener('click', () => {
+        const parent = item.parentElement;
+        const isActive = parent.classList.contains('active');
+        
+        // Close all others
+        document.querySelectorAll('.faq-item').forEach(faq => {
+          faq.classList.remove('active');
+        });
 
-function triggerConfetti() {
-  const duration = 3 * 1000; const end = Date.now() + duration;
-  (function frame() {
-    confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#6366f1', '#38bdf8', '#34d399'] });
-    confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#6366f1', '#38bdf8', '#34d399'] });
-    if (Date.now() < end) requestAnimationFrame(frame);
-  }());
-}
-
-// Data Logic & Official COMSATS Grading Scale
-let rows = { quiz: [], asgn: [], lasgn: [] };
-let savedCourses = JSON.parse(localStorage.getItem('gradecalc_semester')) || [];
-
-const GRADES = [
-  { min: 85, label: 'A', gpa: '4.00', color: '#10b981' }, 
-  { min: 80, label: 'A-', gpa: '3.66', color: '#34d399' }, 
-  { min: 75, label: 'B+', gpa: '3.33', color: '#fbbf24' }, 
-  { min: 71, label: 'B', gpa: '3.00', color: '#f59e0b' }, 
-  { min: 68, label: 'B-', gpa: '2.66', color: '#d97706' }, 
-  { min: 64, label: 'C+', gpa: '2.33', color: '#fb923c' }, 
-  { min: 60, label: 'C', gpa: '2.00', color: '#f97316' }, 
-  { min: 57, label: 'C-', gpa: '1.66', color: '#ea580c' }, 
-  { min: 54, label: 'D+', gpa: '1.33', color: '#f87171' }, 
-  { min: 50, label: 'D', gpa: '1.00', color: '#ef4444' }, 
-  { min: 0, label: 'F', gpa: '0.00', color: '#b91c1c' }
-];
-
-function addRow(type) { rows[type].push({ obt: '', tot: '10' }); renderRows(type); save(); }
-function delRow(type, i) { rows[type].splice(i, 1); renderRows(type); save(); }
-
-function renderRows(type) {
-  const tb = document.getElementById(type + '-body');
-  tb.innerHTML = rows[type].map((r, i) => `
-    <tr>
-      <td><input type="number" value="${r.obt}" oninput="rows['${type}'][${i}].obt=this.value; save()" placeholder="Obt"></td>
-      <td><input type="number" value="${r.tot}" oninput="rows['${type}'][${i}].tot=this.value; save()" placeholder="Tot"></td>
-      <td><button class="btn-danger" onclick="delRow('${type}', ${i})" aria-label="Delete">✕</button></td>
-    </tr>
-  `).join('');
-}
-
-function sumRows(type) {
-  let obt = 0, tot = 0;
-  for (let r of rows[type]) {
-    if (r.obt !== '' && r.tot !== '') {
-      const o = Number(r.obt), t = Number(r.tot);
-      if(o < 0 || t <= 0) throw "Marks must be positive numbers!";
-      if(o > t) throw "Obtained marks cannot be greater than total!";
-      obt += o; tot += t;
-    }
-  }
-  return { obt, tot };
-}
-
-function val(id) { 
-  const v = Number(document.getElementById(id).value); 
-  if(v < 0) throw "Marks must be positive!";
-  return v;
-}
-function raw(id) { return document.getElementById(id).value; }
-
-function clearData() {
-  if(!confirm("Are you sure you want to clear all your marks?")) return;
-  rows = { quiz: [], asgn: [], lasgn: [] };
-  const ids = ['t-mid-obt','t-mid-tot','t-fin-obt','t-fin-tot','l-mid-obt','l-mid-tot','l-fin-obt','l-fin-tot','target'];
-  ids.forEach(id => { 
-    if(id.includes('tot')) document.getElementById(id).value = (id.includes('fin') && id.includes('t-')) ? '100' : (id.includes('fin')) ? '50' : (id.includes('mid') && id.includes('t-')) ? '30' : '25';
-    else document.getElementById(id).value = '';
-  });
-  renderRows('quiz'); renderRows('asgn'); renderRows('lasgn');
-  document.getElementById('results').classList.remove('active');
-  save();
-  showToast('All data cleared');
-}
-
-let calcRes = null;
-
-function triggerCalculate() {
-  const btn = document.getElementById('calc-btn');
-  btn.classList.add('loading');
-  setTimeout(() => { 
-    try { calculate(); } 
-    catch(e) { showToast(e, "error"); }
-    btn.classList.remove('loading'); 
-  }, 400); 
-}
-
-function calculate() {
-  let q = sumRows('quiz'), a = sumRows('asgn'), la = sumRows('lasgn');
-  
-  if(raw('t-mid-obt') && val('t-mid-obt') > val('t-mid-tot')) throw "Theory Mid obtained > total!";
-  if(raw('t-fin-obt') && val('t-fin-obt') > val('t-fin-tot')) throw "Theory Final obtained > total!";
-  if(raw('l-mid-obt') && val('l-mid-obt') > val('l-mid-tot')) throw "Lab Mid obtained > total!";
-  if(raw('l-fin-obt') && val('l-fin-obt') > val('l-fin-tot')) throw "Lab Final obtained > total!";
-
-  let tMid = raw('t-mid-obt') ? (val('t-mid-obt') / val('t-mid-tot')) * 25 : 0;
-  let tFin = raw('t-fin-obt') ? (val('t-fin-obt') / val('t-fin-tot')) * 50 : 0;
-  let qSc = q.tot ? (q.obt / q.tot) * 15 : 0;
-  let aSc = a.tot ? (a.obt / a.tot) * 10 : 0;
-  let thTot = tMid + tFin + qSc + aSc;
-
-  let lMid = raw('l-mid-obt') ? (val('l-mid-obt') / val('l-mid-tot')) * 25 : 0;
-  let lFin = raw('l-fin-obt') ? (val('l-fin-obt') / val('l-fin-tot')) * 50 : 0;
-  let laSc = la.tot ? (la.obt / la.tot) * 25 : 0;
-  let lTot = lMid + lFin + laSc;
-
-  let overall = (thTot * 0.67) + (lTot * 0.33);
-  if(isNaN(overall)) overall = 0;
-  
-  // Math.round is often used to match the exact percentage bracket for COMSATS scale.
-  let roundedOverall = Math.round(overall);
-  let gradeObj = GRADES.find(g => roundedOverall >= g.min) || GRADES[GRADES.length-1];
-
-  document.getElementById('results').classList.add('active');
-  document.getElementById('res-overall').innerText = overall.toFixed(1);
-  document.getElementById('res-grade').innerText = gradeObj.label;
-  document.getElementById('res-grade').style.color = gradeObj.color;
-  document.getElementById('res-gpa').innerText = gradeObj.gpa;
-  
-  const ring = document.getElementById('ring-progress');
-  ring.style.stroke = gradeObj.color;
-  ring.style.strokeDashoffset = 283 - (283 * Math.min(overall, 100)) / 100;
-
-  if (roundedOverall >= 80) triggerConfetti();
-  showToast('Calculated Successfully!');
-
-  calcRes = { thTotNoFin: tMid + qSc + aSc, lTot, tFinTot: val('t-fin-tot') || 100, overall, gradeObj };
-  predict();
-  save(false);
-  
-  // Mobile: Scroll to results
-  if (window.innerWidth <= 900) {
-    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-}
-
-function predict() {
-  if (!calcRes) return;
-  let tgt = document.getElementById('target').value;
-  let res = document.getElementById('pred-res');
-  if (tgt === '' || tgt < 0) { res.innerHTML = '<span style="color: var(--text-muted);">Enter a desired score to see predictions.</span>'; return; }
-  tgt = Number(tgt);
-  
-  let neededTh = (tgt - (calcRes.lTot * 0.33)) / 0.67;
-  let neededTFinScore = neededTh - calcRes.thTotNoFin;
-  let neededTFinMarks = (neededTFinScore / 50) * calcRes.tFinTot;
-  
-  if (calcRes.overall >= tgt) res.innerHTML = "✨ <span style='color: #10b981;'>Target already achieved! Excellent work.</span>";
-  else if (neededTFinMarks > calcRes.tFinTot) res.innerHTML = "⚠️ <span style='color: #ef4444;'>Impossible to achieve.</span>";
-  else if (neededTFinMarks < 0) res.innerHTML = "✨ <span style='color: #10b981;'>Already achievable without the final exam!</span>";
-  else res.innerHTML = `You need <strong style="color: var(--primary); font-size: 1.1em;">${neededTFinMarks.toFixed(2)}</strong> / ${calcRes.tFinTot} in the Theory Final to hit ${tgt}.`;
-}
-
-function saveToDashboard() {
-  if(!calcRes) return showToast("Calculate your score first!", "error");
-  const name = document.getElementById('save-course-name').value.trim();
-  const credits = parseFloat(document.getElementById('save-course-credits').value);
-  
-  if(!name) return showToast("Please enter a course name.", "error");
-  if(isNaN(credits) || credits <= 0) return showToast("Enter valid credit hours.", "error");
-  
-  const course = { id: Date.now(), name, credits, score: calcRes.overall, grade: calcRes.gradeObj.label, gpa: parseFloat(calcRes.gradeObj.gpa), color: calcRes.gradeObj.color };
-  savedCourses.push(course);
-  localStorage.setItem('gradecalc_semester', JSON.stringify(savedCourses));
-  showToast(`${name} saved to Dashboard!`);
-  document.getElementById('save-course-name').value = '';
-}
-
-function save(quiet = true) {
-  let ids = ['t-mid-obt','t-mid-tot','t-fin-obt','t-fin-tot','l-mid-obt','l-mid-tot','l-fin-obt','l-fin-tot','target'];
-  let data = { rows, fields: {} };
-  ids.forEach(id => data.fields[id] = raw(id));
-  localStorage.setItem('gradecalc_min', JSON.stringify(data));
-}
-
-function load() {
-  const savedTheme = localStorage.getItem('gradecalc_theme');
-  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) toggleTheme();
-
-  try {
-    let data = JSON.parse(localStorage.getItem('gradecalc_min'));
-    if (!data) return;
-    if (data.rows) rows = data.rows;
-    if (data.fields) {
-      for (let k in data.fields) if(document.getElementById(k)) document.getElementById(k).value = data.fields[k];
-    }
-  } catch(e) {}
-  renderRows('quiz'); renderRows('asgn'); renderRows('lasgn');
-  if (document.getElementById('target').value) predict();
-}
-
-load();
-</script>
+        // Toggle current
+        if (!isActive) {
+          parent.classList.add('active');
+        }
+      });
+    });
+  </script>
 </body>
 </html>

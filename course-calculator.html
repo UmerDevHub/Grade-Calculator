@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Theory Calculator | GradeCalc</title>
+  <title>Course Calculator | GradeCalc</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
@@ -47,7 +47,6 @@
     .theme-toggle { background: transparent; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; padding: 0.5rem; border-radius: 0; transition: all 0.3s ease-in-out; margin-left: 0.5rem; }
     .theme-toggle:hover { background: var(--border-color); color: var(--text-main); }
     
-    /* Expansive Container for 3-Column Layout */
     .container { max-width: 1400px; margin: 0 auto 3rem; padding: 0 2rem; flex: 1; width: 100%; box-sizing: border-box; }
     
     .hero { text-align: center; padding: 2.5rem 0 2rem; }
@@ -67,6 +66,9 @@
       box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); transition: all 0.3s ease-in-out;
     }
     .card-title { font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem; margin-top: 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 1rem; }
+    .badge { font-size: 0.75rem; background: var(--primary-light); color: var(--primary); padding: 0.35rem 0.75rem; border-radius: 0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .badge.lab { background: #dcfce7; color: #15803d; }
+    [data-theme="dark"] .badge.lab { background: #064e3b; color: #34d399; }
     
     .input-group { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; background: var(--bg-color); padding: 0.75rem 1rem; border-radius: 0; border: 1px solid var(--border-color); transition: all 0.3s ease-in-out; }
     .input-group span { font-weight: 600; color: var(--text-muted); width: 80px; }
@@ -119,6 +121,7 @@
     .predictor-box { background: var(--card-bg); border-radius: 0; padding: 1.5rem; margin-bottom: 2rem; border: 1px solid var(--border-color); }
     
     .footer { background: var(--card-bg); border-top: 1px solid var(--border-color); padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.875rem; margin-top: auto; transition: background 0.3s; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
     .sec-header { display: flex; justify-content: space-between; align-items: center; margin: 1.5rem 0 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px dashed var(--border-color); }
     .sec-header h3 { font-size: 1.125rem; margin: 0; color: var(--text-main); }
     
@@ -148,6 +151,7 @@
     }
     @media (max-width: 1200px) { 
       .dashboard-grid { grid-template-columns: 280px 1fr; gap: 1rem; }
+      .grid-2 { grid-template-columns: 1fr; }
     }
     @media (max-width: 900px) { 
       .dashboard-grid { grid-template-columns: 1fr; }
@@ -163,13 +167,13 @@
     CUI Wah Hub
   </a>
   <div class="nav-links">
-    <a href="course-calculator.html">Course</a>
-    <a href="theory-calculator.html" class="active">Theory</a>
+    <a href="course-calculator.html" class="active">Course</a>
+    <a href="theory-calculator.html">Theory</a>
     <a href="dashboard.html" class="dash-btn">
       <svg width="16" height="16" style="margin-right:4px; vertical-align:-3px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
       Dashboard
     </a>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Dark Mode" id="theme-btn">
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Dark Mode">
       <svg id="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
       <svg id="sun-icon" style="display: none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
     </button>
@@ -178,7 +182,7 @@
 
 <div class="container expansive-container">
   <div class="hero">
-    <h1>Theory Calculator</h1>
+    <h1>Calculate Your Future</h1>
     <p>Enter your marks in the center panel. Your results and predictions will update live on the side.</p>
   </div>
 
@@ -214,29 +218,50 @@
 
     <!-- CENTER PANEL: Inputs -->
     <div class="main-panel center-panel">
-      <div class="card" style="margin-bottom: 0;">
-        <h2 class="card-title">Theory Score</h2>
-        
-        <div class="input-group">
-          <span>Mid (25)</span> 
-          <input type="number" id="mid-obt" placeholder="Obt"> <span style="font-weight: 400; width: auto;">/</span> <input type="number" id="mid-tot" value="30" placeholder="Tot">
+      <div class="grid-2">
+        <!-- Theory Card -->
+        <div class="card" style="margin-bottom: 0;">
+          <h2 class="card-title">Theory <span class="badge">67% Weight</span></h2>
+          <div class="input-group">
+            <span>Mid (25)</span> 
+            <input type="number" id="t-mid-obt" placeholder="Obt"> <span style="font-weight: 400; width: auto;">/</span> <input type="number" id="t-mid-tot" value="30" placeholder="Tot">
+          </div>
+          <div class="input-group">
+            <span>Final (50)</span> 
+            <input type="number" id="t-fin-obt" placeholder="Obt"> <span style="font-weight: 400; width: auto;">/</span> <input type="number" id="t-fin-tot" value="100" placeholder="Tot">
+          </div>
+          
+          <div class="sec-header">
+            <h3>Quizzes (15%)</h3>
+            <button class="btn-secondary" onclick="addRow('quiz')">+ Add Quiz</button>
+          </div>
+          <table id="quiz-table"><tr><th>Obtained</th><th>Total</th><th style="width: 48px;"></th></tr><tbody id="quiz-body"></tbody></table>
+          
+          <div class="sec-header">
+            <h3>Assignments (10%)</h3>
+            <button class="btn-secondary" onclick="addRow('asgn')">+ Add Assignment</button>
+          </div>
+          <table id="asgn-table"><tr><th>Obtained</th><th>Total</th><th style="width: 48px;"></th></tr><tbody id="asgn-body"></tbody></table>
         </div>
-        <div class="input-group">
-          <span>Final (50)</span> 
-          <input type="number" id="fin-obt" placeholder="Obt"> <span style="font-weight: 400; width: auto;">/</span> <input type="number" id="fin-tot" value="50" placeholder="Tot">
+
+        <!-- Lab Card -->
+        <div class="card" style="margin-bottom: 0;">
+          <h2 class="card-title">Lab <span class="badge lab">33% Weight</span></h2>
+          <div class="input-group">
+            <span>Mid (25)</span> 
+            <input type="number" id="l-mid-obt" placeholder="Obt"> <span style="font-weight: 400; width: auto;">/</span> <input type="number" id="l-mid-tot" value="25" placeholder="Tot">
+          </div>
+          <div class="input-group">
+            <span>Final (50)</span> 
+            <input type="number" id="l-fin-obt" placeholder="Obt"> <span style="font-weight: 400; width: auto;">/</span> <input type="number" id="l-fin-tot" value="50" placeholder="Tot">
+          </div>
+          
+          <div class="sec-header">
+            <h3>Lab Tasks (25%)</h3>
+            <button class="btn-secondary" onclick="addRow('lasgn')">+ Add Task</button>
+          </div>
+          <table id="lasgn-table"><tr><th>Obtained</th><th>Total</th><th style="width: 48px;"></th></tr><tbody id="lasgn-body"></tbody></table>
         </div>
-        
-        <div class="sec-header">
-          <h3>Quizzes (15%)</h3>
-          <button class="btn-secondary" onclick="addRow('quiz')">+ Add Quiz</button>
-        </div>
-        <table id="quiz-table"><tr><th>Obtained</th><th>Total</th><th style="width: 48px;"></th></tr><tbody id="quiz-body"></tbody></table>
-        
-        <div class="sec-header">
-          <h3>Assignments (10%)</h3>
-          <button class="btn-secondary" onclick="addRow('asgn')">+ Add Assignment</button>
-        </div>
-        <table id="asgn-table"><tr><th>Obtained</th><th>Total</th><th style="width: 48px;"></th></tr><tbody id="asgn-body"></tbody></table>
       </div>
 
       <div class="actions-row">
@@ -248,7 +273,7 @@
           <svg class="spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
           <span class="btn-text" style="display:flex; align-items:center; gap:0.5rem;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-            Calculate Theory Score
+            Calculate My Marks
           </span>
         </button>
       </div>
@@ -301,7 +326,7 @@ function toggleTheme() {
   document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
   document.getElementById('moon-icon').style.display = isDark ? 'block' : 'none';
   document.getElementById('sun-icon').style.display = isDark ? 'none' : 'block';
-  localStorage.setItem('gradecalc_th_theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('gradecalc_theme', isDark ? 'light' : 'dark');
 }
 
 function showToast(msg, type = 'success') {
@@ -325,8 +350,8 @@ function triggerConfetti() {
   }());
 }
 
-// Data Logic
-let rows = { quiz: [], asgn: [] };
+// Data Logic & Official COMSATS Grading Scale
+let rows = { quiz: [], asgn: [], lasgn: [] };
 let savedCourses = JSON.parse(localStorage.getItem('gradecalc_semester')) || [];
 
 const GRADES = [
@@ -379,13 +404,13 @@ function raw(id) { return document.getElementById(id).value; }
 
 function clearData() {
   if(!confirm("Are you sure you want to clear all your marks?")) return;
-  rows = { quiz: [], asgn: [] };
-  const ids = ['mid-obt','mid-tot','fin-obt','fin-tot','target'];
+  rows = { quiz: [], asgn: [], lasgn: [] };
+  const ids = ['t-mid-obt','t-mid-tot','t-fin-obt','t-fin-tot','l-mid-obt','l-mid-tot','l-fin-obt','l-fin-tot','target'];
   ids.forEach(id => { 
-    if(id.includes('tot')) document.getElementById(id).value = (id.includes('fin')) ? '50' : '30';
+    if(id.includes('tot')) document.getElementById(id).value = (id.includes('fin') && id.includes('t-')) ? '100' : (id.includes('fin')) ? '50' : (id.includes('mid') && id.includes('t-')) ? '30' : '25';
     else document.getElementById(id).value = '';
   });
-  renderRows('quiz'); renderRows('asgn');
+  renderRows('quiz'); renderRows('asgn'); renderRows('lasgn');
   document.getElementById('results').classList.remove('active');
   save();
   showToast('All data cleared');
@@ -404,18 +429,28 @@ function triggerCalculate() {
 }
 
 function calculate() {
-  let q = sumRows('quiz'), a = sumRows('asgn');
+  let q = sumRows('quiz'), a = sumRows('asgn'), la = sumRows('lasgn');
   
-  if(raw('mid-obt') && val('mid-obt') > val('mid-tot')) throw "Mid obtained cannot exceed total!";
-  if(raw('fin-obt') && val('fin-obt') > val('fin-tot')) throw "Final obtained cannot exceed total!";
+  if(raw('t-mid-obt') && val('t-mid-obt') > val('t-mid-tot')) throw "Theory Mid obtained > total!";
+  if(raw('t-fin-obt') && val('t-fin-obt') > val('t-fin-tot')) throw "Theory Final obtained > total!";
+  if(raw('l-mid-obt') && val('l-mid-obt') > val('l-mid-tot')) throw "Lab Mid obtained > total!";
+  if(raw('l-fin-obt') && val('l-fin-obt') > val('l-fin-tot')) throw "Lab Final obtained > total!";
 
-  let mid = raw('mid-obt') ? (val('mid-obt') / val('mid-tot')) * 25 : 0;
-  let fin = raw('fin-obt') ? (val('fin-obt') / val('fin-tot')) * 50 : 0;
+  let tMid = raw('t-mid-obt') ? (val('t-mid-obt') / val('t-mid-tot')) * 25 : 0;
+  let tFin = raw('t-fin-obt') ? (val('t-fin-obt') / val('t-fin-tot')) * 50 : 0;
   let qSc = q.tot ? (q.obt / q.tot) * 15 : 0;
   let aSc = a.tot ? (a.obt / a.tot) * 10 : 0;
-  let overall = mid + fin + qSc + aSc;
+  let thTot = tMid + tFin + qSc + aSc;
 
+  let lMid = raw('l-mid-obt') ? (val('l-mid-obt') / val('l-mid-tot')) * 25 : 0;
+  let lFin = raw('l-fin-obt') ? (val('l-fin-obt') / val('l-fin-tot')) * 50 : 0;
+  let laSc = la.tot ? (la.obt / la.tot) * 25 : 0;
+  let lTot = lMid + lFin + laSc;
+
+  let overall = (thTot * 0.67) + (lTot * 0.33);
   if(isNaN(overall)) overall = 0;
+  
+  // Math.round is often used to match the exact percentage bracket for COMSATS scale.
   let roundedOverall = Math.round(overall);
   let gradeObj = GRADES.find(g => roundedOverall >= g.min) || GRADES[GRADES.length-1];
 
@@ -432,7 +467,7 @@ function calculate() {
   if (roundedOverall >= 80) triggerConfetti();
   showToast('Calculated Successfully!');
 
-  calcRes = { thTotNoFin: mid + qSc + aSc, finTot: val('fin-tot') || 50, overall, gradeObj };
+  calcRes = { thTotNoFin: tMid + qSc + aSc, lTot, tFinTot: val('t-fin-tot') || 100, overall, gradeObj };
   predict();
   save(false);
   
@@ -449,13 +484,14 @@ function predict() {
   if (tgt === '' || tgt < 0) { res.innerHTML = '<span style="color: var(--text-muted);">Enter a desired score to see predictions.</span>'; return; }
   tgt = Number(tgt);
   
-  let neededTFinScore = tgt - calcRes.thTotNoFin;
-  let neededTFinMarks = (neededTFinScore / 50) * calcRes.finTot;
+  let neededTh = (tgt - (calcRes.lTot * 0.33)) / 0.67;
+  let neededTFinScore = neededTh - calcRes.thTotNoFin;
+  let neededTFinMarks = (neededTFinScore / 50) * calcRes.tFinTot;
   
   if (calcRes.overall >= tgt) res.innerHTML = "✨ <span style='color: #10b981;'>Target already achieved! Excellent work.</span>";
-  else if (neededTFinMarks > calcRes.finTot) res.innerHTML = "⚠️ <span style='color: #ef4444;'>Impossible to achieve.</span>";
+  else if (neededTFinMarks > calcRes.tFinTot) res.innerHTML = "⚠️ <span style='color: #ef4444;'>Impossible to achieve.</span>";
   else if (neededTFinMarks < 0) res.innerHTML = "✨ <span style='color: #10b981;'>Already achievable without the final exam!</span>";
-  else res.innerHTML = `You need <strong style="color: var(--primary); font-size: 1.1em;">${neededTFinMarks.toFixed(2)}</strong> / ${calcRes.finTot} in the Final to hit ${tgt}.`;
+  else res.innerHTML = `You need <strong style="color: var(--primary); font-size: 1.1em;">${neededTFinMarks.toFixed(2)}</strong> / ${calcRes.tFinTot} in the Theory Final to hit ${tgt}.`;
 }
 
 function saveToDashboard() {
@@ -474,25 +510,25 @@ function saveToDashboard() {
 }
 
 function save(quiet = true) {
-  let ids = ['mid-obt','mid-tot','fin-obt','fin-tot','target'];
+  let ids = ['t-mid-obt','t-mid-tot','t-fin-obt','t-fin-tot','l-mid-obt','l-mid-tot','l-fin-obt','l-fin-tot','target'];
   let data = { rows, fields: {} };
   ids.forEach(id => data.fields[id] = raw(id));
-  localStorage.setItem('gradecalc_th_min', JSON.stringify(data));
+  localStorage.setItem('gradecalc_min', JSON.stringify(data));
 }
 
 function load() {
-  const savedTheme = localStorage.getItem('gradecalc_th_theme');
+  const savedTheme = localStorage.getItem('gradecalc_theme');
   if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) toggleTheme();
 
   try {
-    let data = JSON.parse(localStorage.getItem('gradecalc_th_min'));
+    let data = JSON.parse(localStorage.getItem('gradecalc_min'));
     if (!data) return;
     if (data.rows) rows = data.rows;
     if (data.fields) {
       for (let k in data.fields) if(document.getElementById(k)) document.getElementById(k).value = data.fields[k];
     }
   } catch(e) {}
-  renderRows('quiz'); renderRows('asgn');
+  renderRows('quiz'); renderRows('asgn'); renderRows('lasgn');
   if (document.getElementById('target').value) predict();
 }
 
