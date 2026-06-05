@@ -11,13 +11,13 @@
       --primary: #6366f1; --primary-hover: #4f46e5; --primary-light: #e0e7ff;
       --bg-color: #f8fafc; --card-bg: #ffffff;
       --text-main: #0f172a; --text-muted: #64748b;
-      --border-color: #e2e8f0; --modal-bg: rgba(15, 23, 42, 0.5);
+      --border-color: #e2e8f0;
     }
     
     [data-theme="dark"] {
       --bg-color: #0f172a; --card-bg: #1e293b;
       --text-main: #f8fafc; --text-muted: #94a3b8;
-      --border-color: #334155; --primary-light: #312e81; --modal-bg: rgba(0, 0, 0, 0.7);
+      --border-color: #334155; --primary-light: #312e81;
     }
 
     body {
@@ -100,7 +100,6 @@
     .results-card .card-title { color: white; border-bottom-color: rgba(255,255,255,0.1); }
     .res-label { color: #94a3b8; font-size: 0.875rem; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 0.5rem; }
     
-    /* Progress Ring CSS */
     .progress-ring { width: 120px; height: 120px; position: relative; }
     .progress-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
     .progress-ring circle { fill: none; stroke-width: 8; stroke-linecap: round; }
@@ -114,23 +113,6 @@
     .predictor-box { background: rgba(255,255,255,0.03); border-radius: 1rem; padding: 1.5rem; margin-top: 2rem; border: 1px solid rgba(255,255,255,0.05); }
     .predictor-box input { background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.1); color: white; }
     .predictor-box input:focus { border-color: #38bdf8; box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2); }
-    
-    /* Dashboard Modal */
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--modal-bg); backdrop-filter: blur(4px); z-index: 100; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
-    .modal-overlay.show { display: flex; opacity: 1; }
-    .modal-content { background: var(--card-bg); width: 100%; max-width: 600px; border-radius: 1.5rem; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); transform: translateY(20px); transition: transform 0.3s; border: 1px solid var(--border-color); max-height: 90vh; overflow-y: auto; }
-    .modal-overlay.show .modal-content { transform: translateY(0); }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem; }
-    .modal-header h2 { margin: 0; color: var(--text-main); font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
-    .close-btn { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
-    .close-btn:hover { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
-    .cgpa-display { text-align: center; background: linear-gradient(135deg, var(--primary) 0%, #818cf8 100%); color: white; padding: 2rem; border-radius: 1rem; margin-bottom: 2rem; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3); }
-    .cgpa-display h3 { margin: 0 0 0.5rem; font-size: 1rem; font-weight: 600; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; }
-    .cgpa-display .cgpa-val { font-size: 3.5rem; font-weight: 800; line-height: 1; }
-    .course-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 1px solid var(--border-color); border-radius: 0.75rem; margin-bottom: 0.75rem; background: var(--bg-color); }
-    .course-info h4 { margin: 0 0 0.25rem; color: var(--text-main); font-size: 1.1rem; }
-    .course-info p { margin: 0; color: var(--text-muted); font-size: 0.875rem; font-weight: 500; }
-    .course-grade { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 1rem; }
     
     .footer { background: var(--card-bg); border-top: 1px solid var(--border-color); padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.875rem; margin-top: auto; transition: background 0.3s; }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
@@ -152,7 +134,7 @@
 
     @media print {
       body { background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; background-image: none !important; }
-      .navbar, .hero p, .actions-row, .btn-secondary, .btn-danger, .predictor-box, .footer, th:last-child, td:last-child, #toast-container, .modal-overlay { display: none !important; }
+      .navbar, .hero p, .actions-row, .btn-secondary, .btn-danger, .predictor-box, .footer, th:last-child, td:last-child, #toast-container { display: none !important; }
       .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
       .card { box-shadow: none !important; border: 1px solid #ccc !important; margin-bottom: 1rem !important; break-inside: avoid; padding: 1rem !important; background: white !important; }
       .results-card { background: white !important; border: 2px solid black !important; }
@@ -173,7 +155,7 @@
   <div class="nav-links">
     <a href="index.html" class="active">Course</a>
     <a href="theory-calculator.html">Theory</a>
-    <a onclick="openDashboard()" class="dash-btn">
+    <a href="dashboard.html" class="dash-btn">
       <svg width="16" height="16" style="margin-right:4px; vertical-align:-3px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
       Dashboard
     </a>
@@ -305,27 +287,6 @@
 
 <div id="toast-container"></div>
 
-<!-- Dashboard Modal -->
-<div id="dashboard-modal" class="modal-overlay">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-        Semester Dashboard
-      </h2>
-      <button class="close-btn" onclick="closeDashboard()">✕</button>
-    </div>
-    <div class="cgpa-display">
-      <h3>Cumulative GPA</h3>
-      <div class="cgpa-val" id="dash-cgpa">0.00</div>
-      <div style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;" id="dash-credits">0 Total Credits</div>
-    </div>
-    <div id="course-list">
-      <!-- Courses rendered here -->
-    </div>
-  </div>
-</div>
-
 <script>
 // UI Elements Logic
 function toggleTheme() {
@@ -357,79 +318,22 @@ function triggerConfetti() {
   }());
 }
 
-// Dashboard Logic
+// Data Logic & Official COMSATS Grading Scale
+let rows = { quiz: [], asgn: [], lasgn: [] };
 let savedCourses = JSON.parse(localStorage.getItem('gradecalc_semester')) || [];
 
-function saveToDashboard() {
-  if(!calcRes) return showToast("Calculate your score first!", "error");
-  const name = document.getElementById('save-course-name').value.trim();
-  const credits = parseFloat(document.getElementById('save-course-credits').value);
-  
-  if(!name) return showToast("Please enter a course name.", "error");
-  if(isNaN(credits) || credits <= 0) return showToast("Enter valid credit hours.", "error");
-  
-  const course = { id: Date.now(), name, credits, score: calcRes.overall, grade: calcRes.gradeObj.label, gpa: parseFloat(calcRes.gradeObj.gpa), color: calcRes.gradeObj.color };
-  savedCourses.push(course);
-  localStorage.setItem('gradecalc_semester', JSON.stringify(savedCourses));
-  showToast(`${name} saved to Dashboard!`);
-  document.getElementById('save-course-name').value = '';
-}
-
-function openDashboard() {
-  document.getElementById('dashboard-modal').classList.add('show');
-  renderDashboard();
-}
-
-function closeDashboard() {
-  document.getElementById('dashboard-modal').classList.remove('show');
-}
-
-function deleteCourse(id) {
-  savedCourses = savedCourses.filter(c => c.id !== id);
-  localStorage.setItem('gradecalc_semester', JSON.stringify(savedCourses));
-  renderDashboard();
-  showToast("Course removed.");
-}
-
-function renderDashboard() {
-  const list = document.getElementById('course-list');
-  if(savedCourses.length === 0) {
-    list.innerHTML = `<div style="text-align:center; color: var(--text-muted); padding: 2rem;">No courses saved yet. Calculate a score and save it to see your CGPA!</div>`;
-    document.getElementById('dash-cgpa').innerText = '0.00';
-    document.getElementById('dash-credits').innerText = '0 Total Credits';
-    return;
-  }
-  
-  let totalPoints = 0, totalCredits = 0;
-  list.innerHTML = savedCourses.map(c => {
-    totalPoints += (c.gpa * c.credits);
-    totalCredits += c.credits;
-    return `
-      <div class="course-item">
-        <div class="course-info">
-          <h4>${c.name}</h4>
-          <p>${c.credits} Credits • Score: ${c.score.toFixed(1)}%</p>
-        </div>
-        <div class="course-grade" style="color: ${c.color}">
-          ${c.grade}
-          <button class="btn-danger" style="margin-left: 1rem; width: 28px; height: 28px;" onclick="deleteCourse(${c.id})">✕</button>
-        </div>
-      </div>
-    `;
-  }).join('');
-  
-  const cgpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : '0.00';
-  document.getElementById('dash-cgpa').innerText = cgpa;
-  document.getElementById('dash-credits').innerText = `${totalCredits} Total Credits`;
-}
-
-// Data Logic
-let rows = { quiz: [], asgn: [], lasgn: [] };
 const GRADES = [
-  { min: 85, label: 'A', gpa: '4.0', color: '#34d399' }, { min: 80, label: 'A-', gpa: '3.66', color: '#34d399' }, 
-  { min: 75, label: 'B+', gpa: '3.33', color: '#fbbf24' }, { min: 70, label: 'B', gpa: '3.0', color: '#fbbf24' }, 
-  { min: 65, label: 'C+', gpa: '2.66', color: '#fb923c' }, { min: 60, label: 'C', gpa: '2.0', color: '#fb923c' }, 
-  { min: 0, label: 'F', gpa: '0.0', color: '#f87171' }
+  { min: 85, label: 'A', gpa: '4.00', color: '#10b981' }, 
+  { min: 80, label: 'A-', gpa: '3.66', color: '#34d399' }, 
+  { min: 75, label: 'B+', gpa: '3.33', color: '#fbbf24' }, 
+  { min: 71, label: 'B', gpa: '3.00', color: '#f59e0b' }, 
+  { min: 68, label: 'B-', gpa: '2.66', color: '#d97706' }, 
+  { min: 64, label: 'C+', gpa: '2.33', color: '#fb923c' }, 
+  { min: 60, label: 'C', gpa: '2.00', color: '#f97316' }, 
+  { min: 57, label: 'C-', gpa: '1.66', color: '#ea580c' }, 
+  { min: 54, label: 'D+', gpa: '1.33', color: '#f87171' }, 
+  { min: 50, label: 'D', gpa: '1.00', color: '#ef4444' }, 
+  { min: 0, label: 'F', gpa: '0.00', color: '#b91c1c' }
 ];
 
 function addRow(type) { rows[type].push({ obt: '', tot: '10' }); renderRows(type); save(); }
@@ -513,7 +417,10 @@ function calculate() {
 
   let overall = (thTot * 0.67) + (lTot * 0.33);
   if(isNaN(overall)) overall = 0;
-  let gradeObj = GRADES.find(g => overall >= g.min) || GRADES[GRADES.length-1];
+  
+  // Math.round is often used to match the exact percentage bracket for COMSATS scale.
+  let roundedOverall = Math.round(overall);
+  let gradeObj = GRADES.find(g => roundedOverall >= g.min) || GRADES[GRADES.length-1];
 
   document.getElementById('results').style.display = 'block';
   document.getElementById('res-overall').innerText = overall.toFixed(1);
@@ -525,7 +432,7 @@ function calculate() {
   ring.style.stroke = gradeObj.color;
   ring.style.strokeDashoffset = 283 - (283 * Math.min(overall, 100)) / 100;
 
-  if (overall >= 80) triggerConfetti();
+  if (roundedOverall >= 80) triggerConfetti();
   showToast('Calculated Successfully!');
 
   calcRes = { thTotNoFin: tMid + qSc + aSc, lTot, tFinTot: val('t-fin-tot') || 100, overall, gradeObj };
@@ -549,6 +456,21 @@ function predict() {
   else if (neededTFinMarks > calcRes.tFinTot) res.innerHTML = "⚠️ <span style='color: #f87171;'>Impossible to achieve.</span>";
   else if (neededTFinMarks < 0) res.innerHTML = "✨ <span style='color: #34d399;'>Already achievable without the final exam!</span>";
   else res.innerHTML = `You need <strong style="color: #38bdf8; font-size: 1.25em;">${neededTFinMarks.toFixed(2)}</strong> / ${calcRes.tFinTot} in the Theory Final to hit ${tgt}.`;
+}
+
+function saveToDashboard() {
+  if(!calcRes) return showToast("Calculate your score first!", "error");
+  const name = document.getElementById('save-course-name').value.trim();
+  const credits = parseFloat(document.getElementById('save-course-credits').value);
+  
+  if(!name) return showToast("Please enter a course name.", "error");
+  if(isNaN(credits) || credits <= 0) return showToast("Enter valid credit hours.", "error");
+  
+  const course = { id: Date.now(), name, credits, score: calcRes.overall, grade: calcRes.gradeObj.label, gpa: parseFloat(calcRes.gradeObj.gpa), color: calcRes.gradeObj.color };
+  savedCourses.push(course);
+  localStorage.setItem('gradecalc_semester', JSON.stringify(savedCourses));
+  showToast(`${name} saved to Dashboard!`);
+  document.getElementById('save-course-name').value = '';
 }
 
 function save(quiet = true) {
@@ -575,12 +497,6 @@ function load() {
 }
 
 load();
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-  const modal = document.getElementById('dashboard-modal');
-  if (event.target == modal) closeDashboard();
-}
 </script>
 </body>
 </html>
