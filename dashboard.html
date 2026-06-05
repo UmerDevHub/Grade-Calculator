@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,49 +9,145 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     :root {
-      --primary: #6366f1; --primary-hover: #4f46e5; --primary-light: #e0e7ff;
-      --bg-color: #f8fafc; --card-bg: #ffffff;
-      --text-main: #0f172a; --text-muted: #64748b;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-light: #e0e7ff;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
       --border-color: #e2e8f0;
     }
-    
+
     [data-theme="dark"] {
-      --bg-color: #0f172a; --card-bg: #1e293b;
-      --text-main: #f8fafc; --text-muted: #94a3b8;
-      --border-color: #334155; --primary-light: #312e81;
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --primary-light: #312e81;
     }
 
     body {
-      font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-color);
-      background-image: radial-gradient(var(--border-color) 1px, transparent 1px); background-size: 24px 24px;
-      color: var(--text-main); margin: 0; padding: 0; line-height: 1.6;
-      display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s;
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--bg-color);
+      background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+      background-size: 24px 24px;
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
     }
-    
+
     .navbar {
-      background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-color); padding: 1rem 2rem;
-      display: flex; justify-content: space-between; align-items: center;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); position: sticky; top: 0; z-index: 10;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+      position: sticky;
+      top: 0;
+      z-index: 10;
       transition: background 0.3s, border-color 0.3s;
     }
-    [data-theme="dark"] .navbar { background: rgba(15, 23, 42, 0.85); }
-    
-    .nav-brand { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; letter-spacing: -0.5px; }
-    .nav-links { display: flex; gap: 0.5rem; align-items: center; }
-    .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 600; padding: 0.5rem 1rem; border-radius: 99px; transition: all 0.2s ease; cursor: pointer; }
-    .nav-links a:hover { background: var(--primary-light); color: var(--primary); }
-    .nav-links a.active { background: #10b981; color: white; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3); }
-    
-    .theme-toggle { background: transparent; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; padding: 0.5rem; border-radius: 50%; transition: 0.2s; margin-left: 0.5rem; }
-    .theme-toggle:hover { background: var(--border-color); color: var(--text-main); }
-    
+
+    [data-theme="dark"] .navbar {
+      background: rgba(15, 23, 42, 0.85);
+    }
+
+    .nav-brand {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 99px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .nav-links a:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .nav-links a.active {
+      background: #10b981;
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+    }
+
+    .theme-toggle {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: 0.2s;
+      margin-left: 0.5rem;
+    }
+
+    .theme-toggle:hover {
+      background: var(--border-color);
+      color: var(--text-main);
+    }
+
     /* Expansive Container for 3-Column Layout */
-    .container { max-width: 1400px; margin: 0 auto 3rem; padding: 0 2rem; flex: 1; width: 100%; box-sizing: border-box; }
-    
-    .hero { text-align: center; padding: 2.5rem 0 2rem; }
-    .hero h1 { font-size: 2.75rem; font-weight: 800; color: var(--text-main); margin: 0 0 0.5rem; letter-spacing: -1px; }
-    .hero p { color: var(--text-muted); font-size: 1.125rem; max-width: 600px; margin: 0 auto; }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto 3rem;
+      padding: 0 2rem;
+      flex: 1;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 2.5rem 0 2rem;
+    }
+
+    .hero h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 0 0 0.5rem;
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.125rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
 
     /* The 3-Column Grid */
     .dashboard-grid {
@@ -61,240 +158,536 @@
     }
 
     .card {
-      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 1.5rem; padding: 2rem; margin-bottom: 2rem;
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); transition: background 0.3s, border-color 0.3s;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+      transition: background 0.3s, border-color 0.3s;
     }
-    
-    .cgpa-display { text-align: center; background: linear-gradient(135deg, var(--primary) 0%, #818cf8 100%); color: white; padding: 2.5rem 1.5rem; border-radius: 1.5rem; margin-bottom: 2rem; box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.3); position: relative; overflow: hidden; }
-    .cgpa-display h3 { margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: 600; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; }
-    .cgpa-display .cgpa-val { font-size: 4.5rem; font-weight: 800; line-height: 1; text-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 0.5rem; }
-    .cgpa-display .credits-val { margin-top: 1rem; font-size: 1rem; font-weight: 500; background: rgba(255,255,255,0.2); display: inline-block; padding: 0.4rem 1rem; border-radius: 99px; }
 
-    .status-badge { font-size: 0.85rem; font-weight: 700; background: rgba(0,0,0,0.2); padding: 0.4rem 1rem; border-radius: 99px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px; }
-    .status-badge.good { background: rgba(16, 185, 129, 0.9); }
-    .status-badge.probation { background: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
-
-    .sec-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--border-color); }
-    .sec-header h2 { font-size: 1.25rem; font-weight: 700; margin: 0; color: var(--text-main); }
-    
-    .course-item { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 1rem; align-items: center; padding: 1rem; border: 1px solid var(--border-color); border-radius: 1rem; margin-bottom: 1rem; background: var(--bg-color); transition: 0.2s; }
-    .course-item:hover { border-color: var(--primary); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    
-    input[type="text"], input[type="number"], select {
-      border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.75rem 1rem; font-size: 1rem; transition: all 0.2s; background: var(--card-bg); font-weight: 500; color: var(--text-main); width: 100%; box-sizing: border-box;
+    .cgpa-display {
+      text-align: center;
+      background: linear-gradient(135deg, var(--primary) 0%, #818cf8 100%);
+      color: white;
+      padding: 2.5rem 1.5rem;
+      border-radius: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.3);
+      position: relative;
+      overflow: hidden;
     }
-    input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
-    
-    .btn { background: linear-gradient(135deg, var(--primary) 0%, #818cf8 100%); color: white; border: none; border-radius: 0.75rem; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3); display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem; }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4); }
-    .btn-secondary { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); box-shadow: 0 1px 2px rgba(0,0,0,0.05); padding: 0.5rem 1rem; font-size: 0.95rem; border-radius: 0.5rem; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; width: 100%; justify-content: center;}
-    .btn-secondary:hover { background: var(--bg-color); transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    .btn-danger { background: #fee2e2; color: #ef4444; border: none; padding: 0.5rem; border-radius: 0.5rem; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; cursor: pointer;}
-    .btn-danger:hover { background: #fecaca; color: #b91c1c; transform: scale(1.05); }
-    [data-theme="dark"] .btn-danger { background: #450a0a; color: #f87171; }
-    [data-theme="dark"] .btn-danger:hover { background: #7f1d1d; }
-    
-    .actions-row { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
-    .btn-clear { background: var(--card-bg); color: #ef4444; border: 1px solid var(--border-color); box-shadow: none; }
-    .btn-clear:hover { background: #fee2e2; border-color: #fca5a5; box-shadow: none; transform: none; }
-    [data-theme="dark"] .btn-clear { background: var(--card-bg); color: #f87171; }
-    [data-theme="dark"] .btn-clear:hover { background: #450a0a; border-color: #7f1d1d; }
 
-    .footer { background: var(--card-bg); border-top: 1px solid var(--border-color); padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.875rem; margin-top: auto; transition: background 0.3s; }
-
-    #toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
-    .toast { background: var(--card-bg); color: var(--text-main); padding: 12px 20px; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); border-left: 4px solid var(--primary); display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 0.95rem; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    .toast.show { transform: translateX(0); }
-    .toast.success { border-left-color: #10b981; }
-    .toast.error { border-left-color: #ef4444; }
-    [data-theme="dark"] .toast { border: 1px solid #334155; }
-
-    @media (max-width: 1024px) { 
-      .dashboard-grid { grid-template-columns: 1fr; }
+    .cgpa-display h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
-    @media (max-width: 768px) { 
-      .course-item { grid-template-columns: 1fr; gap: 0.5rem; }
+
+    .cgpa-display .cgpa-val {
+      font-size: 4.5rem;
+      font-weight: 800;
+      line-height: 1;
+      text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 0.5rem;
+    }
+
+    .cgpa-display .credits-val {
+      margin-top: 1rem;
+      font-size: 1rem;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.2);
+      display: inline-block;
+      padding: 0.4rem 1rem;
+      border-radius: 99px;
+    }
+
+    .status-badge {
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 0.4rem 1rem;
+      border-radius: 99px;
+      display: inline-block;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-badge.good {
+      background: rgba(16, 185, 129, 0.9);
+    }
+
+    .status-badge.probation {
+      background: #ef4444;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+    }
+
+    .sec-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .sec-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0;
+      color: var(--text-main);
+    }
+
+    .course-item {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      margin-bottom: 1rem;
+      background: var(--bg-color);
+      transition: 0.2s;
+    }
+
+    .course-item:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      transition: all 0.2s;
+      background: var(--card-bg);
+      font-weight: 500;
+      color: var(--text-main);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--primary-light);
+    }
+
+    .btn {
+      background: linear-gradient(135deg, var(--primary) 0%, #818cf8 100%);
+      color: white;
+      border: none;
+      border-radius: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3);
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--card-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      padding: 0.5rem 1rem;
+      font-size: 0.95rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-color);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #ef4444;
+      border: none;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-danger:hover {
+      background: #fecaca;
+      color: #b91c1c;
+      transform: scale(1.05);
+    }
+
+    [data-theme="dark"] .btn-danger {
+      background: #450a0a;
+      color: #f87171;
+    }
+
+    [data-theme="dark"] .btn-danger:hover {
+      background: #7f1d1d;
+    }
+
+    .actions-row {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .btn-clear {
+      background: var(--card-bg);
+      color: #ef4444;
+      border: 1px solid var(--border-color);
+      box-shadow: none;
+    }
+
+    .btn-clear:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      box-shadow: none;
+      transform: none;
+    }
+
+    [data-theme="dark"] .btn-clear {
+      background: var(--card-bg);
+      color: #f87171;
+    }
+
+    [data-theme="dark"] .btn-clear:hover {
+      background: #450a0a;
+      border-color: #7f1d1d;
+    }
+
+    .footer {
+      background: var(--card-bg);
+      border-top: 1px solid var(--border-color);
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-top: auto;
+      transition: background 0.3s;
+    }
+
+    #toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    .toast {
+      background: var(--card-bg);
+      color: var(--text-main);
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transform: translateX(120%);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast.success {
+      border-left-color: #10b981;
+    }
+
+    .toast.error {
+      border-left-color: #ef4444;
+    }
+
+    [data-theme="dark"] .toast {
+      border: 1px solid #334155;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .course-item {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<nav class="navbar">
-  <a href="index.html" class="nav-brand">
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-    GradeCalc
-  </a>
-  <div class="nav-links">
-    <a href="index.html">Course</a>
-    <a href="theory-calculator.html">Theory</a>
-    <a href="dashboard.html" class="active">
-      <svg width="16" height="16" style="margin-right:4px; vertical-align:-3px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-      Dashboard
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+      </svg>
+      GradeCalc
     </a>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Dark Mode">
-      <svg id="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-      <svg id="sun-icon" style="display: none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-    </button>
-  </div>
-</nav>
+    <div class="nav-links">
+      <a href="index.html">Course</a>
+      <a href="theory-calculator.html">Theory</a>
+      <a href="dashboard.html" class="active">
+        <svg width="16" height="16" style="margin-right:4px; vertical-align:-3px;" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        Dashboard
+      </a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Dark Mode">
+        <svg id="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+        <svg id="sun-icon" style="display: none;" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
 
-<div class="container">
-  <div class="hero">
-    <h1>Degree Management Dashboard</h1>
-    <p>Track your official COMSATS academic history, set goals, and manage your semester.</p>
-  </div>
-
-  <div class="dashboard-grid">
-    
-    <!-- LEFT PANEL -->
-    <div class="side-panel left-panel">
-      <div class="cgpa-display">
-        <h3>Cumulative Degree GPA</h3>
-        <div class="cgpa-val" id="dash-cgpa">0.00</div>
-        <div class="status-badge" id="academic-status">Status: No Data</div>
-        <br>
-        <div class="credits-val" id="dash-credits">0 Total Credits Earned</div>
-      </div>
-
-      <div class="card" style="padding: 1.5rem;">
-        <h3 style="margin-top: 0; font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem;">Data Management</h3>
-        <div class="actions-row">
-          <button class="btn" style="width: 100%; justify-content: center;" onclick="calculateCGPA()">Update Metrics</button>
-          
-          <button class="btn-secondary" onclick="exportData()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            Export Backup
-          </button>
-          
-          <label class="btn-secondary" style="cursor: pointer; margin: 0;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-            Import Backup
-            <input type="file" id="import-file" accept=".json" style="display: none;" onchange="importData(event)">
-          </label>
-          
-          <button class="btn-secondary btn-clear" style="margin-top: 0.5rem;" onclick="clearDashboard()">Clear All Data</button>
-        </div>
-      </div>
+  <div class="container">
+    <div class="hero">
+      <h1>Degree Management Dashboard</h1>
+      <p>Track your official COMSATS academic history, set goals, and manage your semester.</p>
     </div>
 
-    <!-- CENTER PANEL -->
-    <div class="main-panel center-panel">
-      <div class="card">
-        <div class="sec-header">
-          <h2>Current Semester Courses</h2>
-          <button class="btn btn-secondary" style="width: auto; padding: 0.4rem 0.8rem;" onclick="addBlankCourse()">+ Add Course Manually</button>
+    <div class="dashboard-grid">
+
+      <!-- LEFT PANEL -->
+      <div class="side-panel left-panel">
+        <div class="cgpa-display">
+          <h3>Cumulative Degree GPA</h3>
+          <div class="cgpa-val" id="dash-cgpa">0.00</div>
+          <div class="status-badge" id="academic-status">Status: No Data</div>
+          <br>
+          <div class="credits-val" id="dash-credits">0 Total Credits Earned</div>
         </div>
-        
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 1rem; padding: 0 1rem 0.5rem; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
-          <div>Course Name</div>
-          <div>Credits</div>
-          <div>Grade</div>
-          <div style="width: 40px;"></div>
-        </div>
-        
-        <div id="course-list">
-          <!-- Dynamic Rows Render Here -->
+
+        <div class="card" style="padding: 1.5rem;">
+          <h3
+            style="margin-top: 0; font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+            Data Management</h3>
+          <div class="actions-row">
+            <button class="btn" style="width: 100%; justify-content: center;" onclick="calculateCGPA()">Update
+              Metrics</button>
+
+            <button class="btn-secondary" onclick="exportData()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Export Backup
+            </button>
+
+            <label class="btn-secondary" style="cursor: pointer; margin: 0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              Import Backup
+              <input type="file" id="import-file" accept=".json" style="display: none;" onchange="importData(event)">
+            </label>
+
+            <button class="btn-secondary btn-clear" style="margin-top: 0.5rem;" onclick="clearDashboard()">Clear All
+              Data</button>
+          </div>
         </div>
       </div>
+
+      <!-- CENTER PANEL -->
+      <div class="main-panel center-panel">
+        <div class="card">
+          <div class="sec-header">
+            <h2>Current Semester Courses</h2>
+            <button class="btn btn-secondary" style="width: auto; padding: 0.4rem 0.8rem;" onclick="addBlankCourse()">+
+              Add Course Manually</button>
+          </div>
+
+          <div
+            style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 1rem; padding: 0 1rem 0.5rem; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            <div>Course Name</div>
+            <div>Credits</div>
+            <div>Grade</div>
+            <div style="width: 40px;"></div>
+          </div>
+
+          <div id="course-list">
+            <!-- Dynamic Rows Render Here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="side-panel right-panel">
+        <div class="card" style="padding: 1.5rem;">
+          <div class="sec-header" style="margin-bottom: 1rem; padding-bottom: 0.5rem;">
+            <h2>Previous History</h2>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: -0.5rem; margin-bottom: 1rem;">Combine
+            with current semester to calculate overall Degree CGPA.</p>
+
+          <label
+            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase;">Previous
+            Credits Earned</label>
+          <input type="number" id="prev-credits" placeholder="e.g. 60" min="0" oninput="saveHistory(); calculateCGPA();"
+            style="margin-bottom: 1rem;">
+
+          <label
+            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase;">Previous
+            CGPA</label>
+          <input type="number" id="prev-cgpa" placeholder="e.g. 3.25" min="0" max="4.0" step="0.01"
+            oninput="saveHistory(); calculateCGPA();">
+        </div>
+
+        <div class="card"
+          style="padding: 1.5rem; background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2);">
+          <div class="sec-header"
+            style="border-bottom-color: rgba(16, 185, 129, 0.2); margin-bottom: 1rem; padding-bottom: 0.5rem;">
+            <h2 style="font-size: 1.15rem;">🎯 Target Planner</h2>
+          </div>
+          <label
+            style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.75rem;">I
+            want my Overall Degree CGPA to be:</label>
+          <input type="number" id="target-cgpa" placeholder="e.g. 3.50" step="0.01" min="0" max="4.0"
+            style="margin-bottom: 1rem; background: rgba(255,255,255,0.5);"
+            oninput="saveHistory(); calculatePlanner();">
+
+          <div id="planner-result"
+            style="font-size: 0.95rem; font-weight: 500; color: var(--text-main); line-height: 1.5;">
+            <span style="color: var(--text-muted);">Enter a target CGPA to see what you need this semester.</span>
+          </div>
+        </div>
+      </div>
+
     </div>
-
-    <!-- RIGHT PANEL -->
-    <div class="side-panel right-panel">
-      <div class="card" style="padding: 1.5rem;">
-        <div class="sec-header" style="margin-bottom: 1rem; padding-bottom: 0.5rem;">
-          <h2>Previous History</h2>
-        </div>
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: -0.5rem; margin-bottom: 1rem;">Combine with current semester to calculate overall Degree CGPA.</p>
-        
-        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase;">Previous Credits Earned</label>
-        <input type="number" id="prev-credits" placeholder="e.g. 60" min="0" oninput="saveHistory(); calculateCGPA();" style="margin-bottom: 1rem;">
-        
-        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase;">Previous CGPA</label>
-        <input type="number" id="prev-cgpa" placeholder="e.g. 3.25" min="0" max="4.0" step="0.01" oninput="saveHistory(); calculateCGPA();">
-      </div>
-
-      <div class="card" style="padding: 1.5rem; background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2);">
-        <div class="sec-header" style="border-bottom-color: rgba(16, 185, 129, 0.2); margin-bottom: 1rem; padding-bottom: 0.5rem;">
-          <h2 style="font-size: 1.15rem;">🎯 Target Planner</h2>
-        </div>
-        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.75rem;">I want my Overall Degree CGPA to be:</label>
-        <input type="number" id="target-cgpa" placeholder="e.g. 3.50" step="0.01" min="0" max="4.0" style="margin-bottom: 1rem; background: rgba(255,255,255,0.5);" oninput="saveHistory(); calculatePlanner();">
-        
-        <div id="planner-result" style="font-size: 0.95rem; font-weight: 500; color: var(--text-main); line-height: 1.5;">
-          <span style="color: var(--text-muted);">Enter a target CGPA to see what you need this semester.</span>
-        </div>
-      </div>
-    </div>
-
   </div>
-</div>
 
-<footer class="footer">
-  <p>&copy; 2026 GradeCalc. Official COMSATS Grading Policy Applied.</p>
-</footer>
+  <footer class="footer">
+    <p>&copy; 2026 GradeCalc. Official COMSATS Grading Policy Applied.</p>
+  </footer>
 
-<div id="toast-container"></div>
+  <div id="toast-container"></div>
 
-<script>
-// Official COMSATS Grading Scale
-const GRADES = [
-  { label: 'A', gpa: 4.00, color: '#10b981' }, 
-  { label: 'A-', gpa: 3.66, color: '#34d399' }, 
-  { label: 'B+', gpa: 3.33, color: '#fbbf24' }, 
-  { label: 'B', gpa: 3.00, color: '#f59e0b' }, 
-  { label: 'B-', gpa: 2.66, color: '#d97706' }, 
-  { label: 'C+', gpa: 2.33, color: '#fb923c' }, 
-  { label: 'C', gpa: 2.00, color: '#f97316' }, 
-  { label: 'C-', gpa: 1.66, color: '#ea580c' }, 
-  { label: 'D+', gpa: 1.33, color: '#f87171' }, 
-  { label: 'D', gpa: 1.00, color: '#ef4444' }, 
-  { label: 'F', gpa: 0.00, color: '#b91c1c' }
-];
+  <script>
+    // Official COMSATS Grading Scale
+    const GRADES = [
+      { label: 'A', gpa: 4.00, color: '#10b981' },
+      { label: 'A-', gpa: 3.66, color: '#34d399' },
+      { label: 'B+', gpa: 3.33, color: '#fbbf24' },
+      { label: 'B', gpa: 3.00, color: '#f59e0b' },
+      { label: 'B-', gpa: 2.66, color: '#d97706' },
+      { label: 'C+', gpa: 2.33, color: '#fb923c' },
+      { label: 'C', gpa: 2.00, color: '#f97316' },
+      { label: 'C-', gpa: 1.66, color: '#ea580c' },
+      { label: 'D+', gpa: 1.33, color: '#f87171' },
+      { label: 'D', gpa: 1.00, color: '#ef4444' },
+      { label: 'F', gpa: 0.00, color: '#b91c1c' }
+    ];
 
-let courses = JSON.parse(localStorage.getItem('gradecalc_semester')) || [];
+    let courses = JSON.parse(localStorage.getItem('gradecalc_semester')) || [];
 
-function toggleTheme() {
-  const isDark = document.body.getAttribute('data-theme') === 'dark';
-  document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.getElementById('moon-icon').style.display = isDark ? 'block' : 'none';
-  document.getElementById('sun-icon').style.display = isDark ? 'none' : 'block';
-  localStorage.setItem('gradecalc_theme', isDark ? 'light' : 'dark');
-}
+    function toggleTheme() {
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('moon-icon').style.display = isDark ? 'block' : 'none';
+      document.getElementById('sun-icon').style.display = isDark ? 'none' : 'block';
+      localStorage.setItem('gradecalc_theme', isDark ? 'light' : 'dark');
+    }
 
-function showToast(msg, type = 'success') {
-  const container = document.getElementById('toast-container');
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.innerHTML = type === 'success' 
-    ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>' + msg
-    : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>' + msg;
-  container.appendChild(toast);
-  setTimeout(() => toast.classList.add('show'), 10);
-  setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
-}
+    function showToast(msg, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = type === 'success'
+        ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>' + msg
+        : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>' + msg;
+      container.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+    }
 
-function triggerConfetti() {
-  const duration = 3 * 1000; const end = Date.now() + duration;
-  (function frame() {
-    confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#6366f1', '#38bdf8', '#34d399'] });
-    confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#6366f1', '#38bdf8', '#34d399'] });
-    if (Date.now() < end) requestAnimationFrame(frame);
-  }());
-}
+    function triggerConfetti() {
+      const duration = 3 * 1000; const end = Date.now() + duration;
+      (function frame() {
+        confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#6366f1', '#38bdf8', '#34d399'] });
+        confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#6366f1', '#38bdf8', '#34d399'] });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      }());
+    }
 
-function renderOptions(selectedGrade) {
-  return GRADES.map(g => `<option value="${g.gpa}" ${selectedGrade === g.label || selectedGrade == g.gpa ? 'selected' : ''}>${g.label} (${g.gpa.toFixed(2)})</option>`).join('');
-}
+    function renderOptions(selectedGrade) {
+      return GRADES.map(g => `<option value="${g.gpa}" ${selectedGrade === g.label || selectedGrade == g.gpa ? 'selected' : ''}>${g.label} (${g.gpa.toFixed(2)})</option>`).join('');
+    }
 
-function renderCourses() {
-  const list = document.getElementById('course-list');
-  if (courses.length === 0) {
-    list.innerHTML = `<div style="text-align:center; padding: 3rem; color: var(--text-muted); background: var(--bg-color); border-radius: 1rem; border: 1px dashed var(--border-color);">You haven't added any courses for this semester yet.</div>`;
-    calculateCGPA(true);
-    return;
-  }
-  
-  list.innerHTML = courses.map((c, i) => `
+    function renderCourses() {
+      const list = document.getElementById('course-list');
+      if (courses.length === 0) {
+        list.innerHTML = `<div style="text-align:center; padding: 3rem; color: var(--text-muted); background: var(--bg-color); border-radius: 1rem; border: 1px dashed var(--border-color);">You haven't added any courses for this semester yet.</div>`;
+        calculateCGPA(true);
+        return;
+      }
+
+      list.innerHTML = courses.map((c, i) => `
     <div class="course-item">
       <input type="text" value="${c.name || ''}" placeholder="Course Name" oninput="updateCourse(${i}, 'name', this.value)">
       <input type="number" value="${c.credits}" min="1" max="6" placeholder="Credits" oninput="updateCourse(${i}, 'credits', this.value)">
@@ -306,190 +699,191 @@ function renderCourses() {
       </button>
     </div>
   `).join('');
-  calculateCGPA(true);
-}
-
-function addBlankCourse() {
-  courses.push({ id: Date.now(), name: '', credits: 3, gpa: 4.00 });
-  renderCourses();
-}
-
-function updateCourse(index, field, value) {
-  if(field === 'credits' || field === 'gpa') value = parseFloat(value);
-  courses[index][field] = value;
-  localStorage.setItem('gradecalc_semester', JSON.stringify(courses));
-}
-
-function deleteCourse(index) {
-  courses.splice(index, 1);
-  localStorage.setItem('gradecalc_semester', JSON.stringify(courses));
-  renderCourses();
-  showToast("Course removed.");
-}
-
-function clearDashboard() {
-  if(!confirm("Are you sure you want to clear your entire semester dashboard?")) return;
-  courses = [];
-  document.getElementById('prev-credits').value = '';
-  document.getElementById('prev-cgpa').value = '';
-  document.getElementById('target-cgpa').value = '';
-  localStorage.removeItem('gradecalc_semester');
-  localStorage.removeItem('gradecalc_history');
-  renderCourses();
-  showToast("Dashboard cleared.");
-}
-
-function saveHistory() {
-  const history = {
-    prevCredits: document.getElementById('prev-credits').value,
-    prevCGPA: document.getElementById('prev-cgpa').value,
-    targetCGPA: document.getElementById('target-cgpa').value
-  };
-  localStorage.setItem('gradecalc_history', JSON.stringify(history));
-}
-
-function loadHistory() {
-  try {
-    const history = JSON.parse(localStorage.getItem('gradecalc_history'));
-    if (history) {
-      document.getElementById('prev-credits').value = history.prevCredits || '';
-      document.getElementById('prev-cgpa').value = history.prevCGPA || '';
-      document.getElementById('target-cgpa').value = history.targetCGPA || '';
+      calculateCGPA(true);
     }
-  } catch (e) {}
-}
 
-let lastCalculatedData = { currentCredits: 0, prevCredits: 0, prevCGPA: 0 };
-
-function calculateCGPA(quiet = false) {
-  let prevCredits = parseFloat(document.getElementById('prev-credits').value) || 0;
-  let prevCGPA = parseFloat(document.getElementById('prev-cgpa').value) || 0;
-  
-  let currentPoints = 0;
-  let currentCredits = 0;
-  let hasError = false;
-  
-  courses.forEach(c => {
-    if(isNaN(c.credits) || c.credits <= 0) hasError = true;
-    else {
-      currentCredits += c.credits;
-      currentPoints += (c.gpa * c.credits);
-    }
-  });
-  
-  if (hasError && !quiet) return showToast("Please ensure all current credit hours are valid numbers.", "error");
-  
-  let totalCredits = prevCredits + currentCredits;
-  let totalPoints = (prevCredits * prevCGPA) + currentPoints;
-  
-  let cgpa = totalCredits > 0 ? (totalPoints / totalCredits) : 0;
-  
-  document.getElementById('dash-cgpa').innerText = cgpa.toFixed(2);
-  document.getElementById('dash-credits').innerText = `${totalCredits} Total Credits Earned`;
-  
-  // Status Badge Logic
-  const badge = document.getElementById('academic-status');
-  if (totalCredits === 0) {
-    badge.className = 'status-badge';
-    badge.innerText = 'Status: No Data';
-  } else if (cgpa >= 2.0) {
-    badge.className = 'status-badge good';
-    badge.innerText = 'Status: Good Standing';
-  } else {
-    badge.className = 'status-badge probation';
-    badge.innerText = 'Status: Probation Risk (Below 2.0)';
-  }
-  
-  lastCalculatedData = { currentCredits, prevCredits, prevCGPA };
-  calculatePlanner();
-  
-  if (!quiet) {
-    showToast("Metrics Updated!");
-    if (cgpa >= 3.5 && totalCredits > 0) triggerConfetti();
-  }
-}
-
-function calculatePlanner() {
-  const target = parseFloat(document.getElementById('target-cgpa').value);
-  const resBox = document.getElementById('planner-result');
-  
-  if (isNaN(target) || target <= 0) {
-    resBox.innerHTML = '<span style="color: var(--text-muted);">Enter a target CGPA to see what you need this semester.</span>';
-    return;
-  }
-  
-  const { currentCredits, prevCredits, prevCGPA } = lastCalculatedData;
-  const totalCredits = currentCredits + prevCredits;
-  
-  if (currentCredits === 0) {
-    resBox.innerHTML = '<span style="color: var(--text-muted);">Add courses to your Current Semester to use the planner.</span>';
-    return;
-  }
-  
-  const totalPointsNeeded = target * totalCredits;
-  const pointsAlreadyEarned = prevCredits * prevCGPA;
-  const pointsNeededThisSemester = totalPointsNeeded - pointsAlreadyEarned;
-  const requiredSemesterGPA = pointsNeededThisSemester / currentCredits;
-  
-  if (requiredSemesterGPA > 4.0) {
-    resBox.innerHTML = `⚠️ <span style="color: #ef4444;">Impossible. You need a Semester GPA of <strong>${requiredSemesterGPA.toFixed(2)}</strong>.</span>`;
-  } else if (requiredSemesterGPA <= 0) {
-    resBox.innerHTML = `✨ <span style="color: #10b981;">Target achieved! You don't even need to pass this semester to keep it above ${target.toFixed(2)}.</span>`;
-  } else {
-    resBox.innerHTML = `You need to average a <strong style="color: var(--primary); font-size: 1.25em;">${requiredSemesterGPA.toFixed(2)} GPA</strong> this semester to reach your target of ${target.toFixed(2)}.`;
-  }
-}
-
-function exportData() {
-  const data = {
-    courses: JSON.parse(localStorage.getItem('gradecalc_semester')) || [],
-    history: JSON.parse(localStorage.getItem('gradecalc_history')) || {}
-  };
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
-  const el = document.createElement('a');
-  el.setAttribute("href", dataStr);
-  el.setAttribute("download", "gradecalc_backup.json");
-  document.body.appendChild(el);
-  el.click();
-  el.remove();
-  showToast("Data exported successfully!");
-}
-
-function importData(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (data.courses) {
-        courses = data.courses;
-        localStorage.setItem('gradecalc_semester', JSON.stringify(courses));
-      }
-      if (data.history) {
-        localStorage.setItem('gradecalc_history', JSON.stringify(data.history));
-      }
-      loadHistory();
+    function addBlankCourse() {
+      courses.push({ id: Date.now(), name: '', credits: 3, gpa: 4.00 });
       renderCourses();
-      showToast("Data imported successfully!");
-      document.getElementById('import-file').value = ""; // Reset input
-    } catch(err) {
-      showToast("Invalid backup file.", "error");
     }
-  };
-  reader.readAsText(file);
-}
 
-// Initialization
-const savedTheme = localStorage.getItem('gradecalc_theme');
-if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-  document.body.setAttribute('data-theme', 'dark');
-  document.getElementById('moon-icon').style.display = 'block';
-  document.getElementById('sun-icon').style.display = 'none';
-}
-loadHistory();
-renderCourses();
+    function updateCourse(index, field, value) {
+      if (field === 'credits' || field === 'gpa') value = parseFloat(value);
+      courses[index][field] = value;
+      localStorage.setItem('gradecalc_semester', JSON.stringify(courses));
+    }
 
-</script>
+    function deleteCourse(index) {
+      courses.splice(index, 1);
+      localStorage.setItem('gradecalc_semester', JSON.stringify(courses));
+      renderCourses();
+      showToast("Course removed.");
+    }
+
+    function clearDashboard() {
+      if (!confirm("Are you sure you want to clear your entire semester dashboard?")) return;
+      courses = [];
+      document.getElementById('prev-credits').value = '';
+      document.getElementById('prev-cgpa').value = '';
+      document.getElementById('target-cgpa').value = '';
+      localStorage.removeItem('gradecalc_semester');
+      localStorage.removeItem('gradecalc_history');
+      renderCourses();
+      showToast("Dashboard cleared.");
+    }
+
+    function saveHistory() {
+      const history = {
+        prevCredits: document.getElementById('prev-credits').value,
+        prevCGPA: document.getElementById('prev-cgpa').value,
+        targetCGPA: document.getElementById('target-cgpa').value
+      };
+      localStorage.setItem('gradecalc_history', JSON.stringify(history));
+    }
+
+    function loadHistory() {
+      try {
+        const history = JSON.parse(localStorage.getItem('gradecalc_history'));
+        if (history) {
+          document.getElementById('prev-credits').value = history.prevCredits || '';
+          document.getElementById('prev-cgpa').value = history.prevCGPA || '';
+          document.getElementById('target-cgpa').value = history.targetCGPA || '';
+        }
+      } catch (e) { }
+    }
+
+    let lastCalculatedData = { currentCredits: 0, prevCredits: 0, prevCGPA: 0 };
+
+    function calculateCGPA(quiet = false) {
+      let prevCredits = parseFloat(document.getElementById('prev-credits').value) || 0;
+      let prevCGPA = parseFloat(document.getElementById('prev-cgpa').value) || 0;
+
+      let currentPoints = 0;
+      let currentCredits = 0;
+      let hasError = false;
+
+      courses.forEach(c => {
+        if (isNaN(c.credits) || c.credits <= 0) hasError = true;
+        else {
+          currentCredits += c.credits;
+          currentPoints += (c.gpa * c.credits);
+        }
+      });
+
+      if (hasError && !quiet) return showToast("Please ensure all current credit hours are valid numbers.", "error");
+
+      let totalCredits = prevCredits + currentCredits;
+      let totalPoints = (prevCredits * prevCGPA) + currentPoints;
+
+      let cgpa = totalCredits > 0 ? (totalPoints / totalCredits) : 0;
+
+      document.getElementById('dash-cgpa').innerText = cgpa.toFixed(2);
+      document.getElementById('dash-credits').innerText = `${totalCredits} Total Credits Earned`;
+
+      // Status Badge Logic
+      const badge = document.getElementById('academic-status');
+      if (totalCredits === 0) {
+        badge.className = 'status-badge';
+        badge.innerText = 'Status: No Data';
+      } else if (cgpa >= 2.0) {
+        badge.className = 'status-badge good';
+        badge.innerText = 'Status: Good Standing';
+      } else {
+        badge.className = 'status-badge probation';
+        badge.innerText = 'Status: Probation Risk (Below 2.0)';
+      }
+
+      lastCalculatedData = { currentCredits, prevCredits, prevCGPA };
+      calculatePlanner();
+
+      if (!quiet) {
+        showToast("Metrics Updated!");
+        if (cgpa >= 3.5 && totalCredits > 0) triggerConfetti();
+      }
+    }
+
+    function calculatePlanner() {
+      const target = parseFloat(document.getElementById('target-cgpa').value);
+      const resBox = document.getElementById('planner-result');
+
+      if (isNaN(target) || target <= 0) {
+        resBox.innerHTML = '<span style="color: var(--text-muted);">Enter a target CGPA to see what you need this semester.</span>';
+        return;
+      }
+
+      const { currentCredits, prevCredits, prevCGPA } = lastCalculatedData;
+      const totalCredits = currentCredits + prevCredits;
+
+      if (currentCredits === 0) {
+        resBox.innerHTML = '<span style="color: var(--text-muted);">Add courses to your Current Semester to use the planner.</span>';
+        return;
+      }
+
+      const totalPointsNeeded = target * totalCredits;
+      const pointsAlreadyEarned = prevCredits * prevCGPA;
+      const pointsNeededThisSemester = totalPointsNeeded - pointsAlreadyEarned;
+      const requiredSemesterGPA = pointsNeededThisSemester / currentCredits;
+
+      if (requiredSemesterGPA > 4.0) {
+        resBox.innerHTML = `⚠️ <span style="color: #ef4444;">Impossible. You need a Semester GPA of <strong>${requiredSemesterGPA.toFixed(2)}</strong>.</span>`;
+      } else if (requiredSemesterGPA <= 0) {
+        resBox.innerHTML = `✨ <span style="color: #10b981;">Target achieved! You don't even need to pass this semester to keep it above ${target.toFixed(2)}.</span>`;
+      } else {
+        resBox.innerHTML = `You need to average a <strong style="color: var(--primary); font-size: 1.25em;">${requiredSemesterGPA.toFixed(2)} GPA</strong> this semester to reach your target of ${target.toFixed(2)}.`;
+      }
+    }
+
+    function exportData() {
+      const data = {
+        courses: JSON.parse(localStorage.getItem('gradecalc_semester')) || [],
+        history: JSON.parse(localStorage.getItem('gradecalc_history')) || {}
+      };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+      const el = document.createElement('a');
+      el.setAttribute("href", dataStr);
+      el.setAttribute("download", "gradecalc_backup.json");
+      document.body.appendChild(el);
+      el.click();
+      el.remove();
+      showToast("Data exported successfully!");
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (data.courses) {
+            courses = data.courses;
+            localStorage.setItem('gradecalc_semester', JSON.stringify(courses));
+          }
+          if (data.history) {
+            localStorage.setItem('gradecalc_history', JSON.stringify(data.history));
+          }
+          loadHistory();
+          renderCourses();
+          showToast("Data imported successfully!");
+          document.getElementById('import-file').value = ""; // Reset input
+        } catch (err) {
+          showToast("Invalid backup file.", "error");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Initialization
+    const savedTheme = localStorage.getItem('gradecalc_theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.body.setAttribute('data-theme', 'dark');
+      document.getElementById('moon-icon').style.display = 'block';
+      document.getElementById('sun-icon').style.display = 'none';
+    }
+    loadHistory();
+    renderCourses();
+
+  </script>
 </body>
+
 </html>
