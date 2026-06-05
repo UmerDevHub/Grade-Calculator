@@ -1,781 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Theory Marks Calculator</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
-
-  :root {
-    --bg: #0d0f14;
-    --surface: #151820;
-    --surface2: #1c2030;
-    --surface3: #232840;
-    --border: #2a3050;
-    --border2: #364070;
-    --text: #e8ecf8;
-    --text2: #8892b0;
-    --text3: #5a6480;
-    --accent: #6c8ef5;
-    --accent2: #a78bfa;
-    --success: #4ade80;
-    --warn: #fbbf24;
-    --danger: #f87171;
-    --mono: 'JetBrains Mono', monospace;
-    --sans: 'Space Grotesk', sans-serif;
-    --glow: 0 0 20px rgba(108, 142, 245, 0.15);
-    --glow2: 0 0 40px rgba(108, 142, 245, 0.08);
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: var(--sans);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    background-image: radial-gradient(ellipse at 20% 0%, rgba(108,142,245,0.06) 0%, transparent 50%),
-                      radial-gradient(ellipse at 80% 100%, rgba(167,139,250,0.06) 0%, transparent 50%);
-  }
-
-  /* NAV */
-  nav {
-    background: rgba(21, 24, 32, 0.9);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    padding: 14px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .nav-brand {
-    display: flex; align-items: center; gap: 10px;
-    text-decoration: none; color: var(--text);
-  }
-  .nav-logo {
-    width: 32px; height: 32px; border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 700;
-  }
-  .nav-title { font-weight: 700; font-size: 0.95rem; }
-  .nav-links { display: flex; gap: 8px; }
-  .nav-link {
-    padding: 7px 16px; border-radius: 6px;
-    font-size: 0.83rem; font-weight: 600;
-    text-decoration: none; transition: all .2s;
-    border: 1px solid transparent;
-    cursor: pointer;
-  }
-  .nav-link.active {
-    background: var(--surface2);
-    border-color: var(--border2);
-    color: var(--accent);
-  }
-  .nav-link:not(.active) {
-    color: var(--text2);
-  }
-  .nav-link:not(.active):hover {
-    background: var(--surface);
-    color: var(--text);
-  }
-
-  /* HEADER */
-  .hero {
-    padding: 48px 24px 32px;
-    text-align: center;
-    max-width: 700px;
-    margin: 0 auto;
-  }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 12px; border-radius: 20px;
-    background: rgba(108,142,245,0.1);
-    border: 1px solid rgba(108,142,245,0.25);
-    font-family: var(--mono); font-size: 0.72rem;
-    color: var(--accent); margin-bottom: 16px;
-  }
-  .hero h1 {
-    font-size: clamp(1.8rem, 5vw, 2.8rem);
-    font-weight: 700;
-    line-height: 1.15;
-    background: linear-gradient(135deg, var(--text) 40%, var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 12px;
-  }
-  .hero p { color: var(--text2); font-size: 0.95rem; line-height: 1.6; }
-
-  /* WEIGHT STRIP */
-  .weight-strip {
-    max-width: 800px; margin: 0 auto 32px;
-    padding: 0 24px;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-  }
-  .ws-cell {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 10px;
-    text-align: center;
-    transition: border-color .2s;
-  }
-  .ws-cell:hover { border-color: var(--border2); }
-  .ws-cell .label { font-size: 0.68rem; color: var(--text3); font-family: var(--mono); margin-bottom: 4px; }
-  .ws-cell .value { font-size: 1.4rem; font-weight: 700; color: var(--accent); font-family: var(--mono); }
-
-  /* CONTAINER */
-  .container { max-width: 900px; margin: 0 auto; padding: 0 24px 60px; }
-
-  /* CARD */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    margin-bottom: 16px;
-    transition: border-color .2s, box-shadow .2s;
-  }
-  .card:hover { border-color: var(--border2); box-shadow: var(--glow2); }
-  .card-head {
-    padding: 16px 20px;
-    display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface2);
-  }
-  .card-head h2 { font-size: 0.95rem; font-weight: 600; color: var(--text); }
-  .badge {
-    font-family: var(--mono); font-size: 0.7rem;
-    padding: 3px 10px; border-radius: 4px;
-    background: rgba(108,142,245,0.15);
-    color: var(--accent);
-    border: 1px solid rgba(108,142,245,0.25);
-  }
-  .card-body { padding: 20px; }
-
-  /* GRID */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media(max-width:640px){ .grid-2 { grid-template-columns: 1fr; } }
-
-  /* FIELD */
-  .field { display: flex; flex-direction: column; gap: 6px; }
-  .field label { font-size: 0.78rem; font-weight: 600; color: var(--text2); }
-  .tin {
-    width: 100%; padding: 10px 14px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-family: var(--mono); font-size: 0.88rem;
-    color: var(--text);
-    transition: border-color .2s, box-shadow .2s;
-  }
-  .tin:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,142,245,0.15); }
-  .tin::placeholder { color: var(--text3); }
-  .tin.err { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(248,113,113,0.12); }
-
-  .valmsg { font-size: 0.72rem; color: var(--danger); font-family: var(--mono); display: none; }
-  .valmsg.show { display: block; }
-
-  /* COUNT ROW */
-  .count-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-  .count-row label { font-size: 0.85rem; color: var(--text2); font-weight: 500; }
-  .count-input {
-    width: 70px; padding: 7px 12px;
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 6px; font-family: var(--mono); font-size: 0.88rem;
-    color: var(--text); transition: border-color .2s;
-  }
-  .count-input:focus { outline: none; border-color: var(--accent); }
-
-  /* DYN TABLE */
-  .dyn-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  .dyn-table th {
-    text-align: left; padding: 8px 12px;
-    font-family: var(--mono); font-size: 0.68rem;
-    color: var(--text3); border-bottom: 1px solid var(--border);
-    background: var(--surface2); font-weight: 600; letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-  .dyn-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); }
-  .dyn-table tr:last-child td { border-bottom: none; }
-
-  .btn-del {
-    background: none; border: 1px solid var(--border);
-    border-radius: 6px; cursor: pointer; padding: 5px 10px;
-    color: var(--danger); font-size: 0.8rem; font-weight: 600;
-    transition: all .15s;
-  }
-  .btn-del:hover { background: rgba(248,113,113,0.1); border-color: var(--danger); }
-
-  .btn-add {
-    margin-top: 14px;
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 8px 16px; border-radius: 7px;
-    border: 1px dashed var(--border2);
-    background: transparent; cursor: pointer;
-    font-family: var(--sans); font-size: 0.82rem; font-weight: 600;
-    color: var(--accent); transition: all .2s;
-  }
-  .btn-add:hover { background: rgba(108,142,245,0.08); border-style: solid; }
-
-  /* CALC BUTTON */
-  .btn-calc {
-    width: 100%; padding: 16px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: white; border: none; border-radius: 10px;
-    font-family: var(--sans); font-size: 1rem; font-weight: 700;
-    cursor: pointer; margin: 24px 0 0;
-    transition: opacity .2s, transform .1s;
-    letter-spacing: 0.3px;
-    box-shadow: 0 4px 20px rgba(108,142,245,0.3);
-  }
-  .btn-calc:hover { opacity: 0.9; transform: translateY(-1px); }
-  .btn-calc:active { transform: translateY(0); }
-
-  /* RESULTS */
-  .score-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px; margin-bottom: 20px;
-  }
-  .score-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px 16px;
-    text-align: center;
-    transition: all .2s;
-  }
-  .score-box:hover { border-color: var(--border2); }
-  .score-box .slabel { font-family: var(--mono); font-size: 0.65rem; color: var(--text3); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-  .score-box .sval { font-size: 2.2rem; font-weight: 700; line-height: 1; font-family: var(--mono); }
-  .score-box .ssub { font-family: var(--mono); font-size: 0.7rem; color: var(--text3); margin-top: 5px; }
-  .score-box.main { background: linear-gradient(135deg, var(--surface2), var(--surface3)); border-color: var(--border2); }
-  .score-box.main .sval { background: linear-gradient(135deg, var(--text), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-  .grade-pill {
-    display: inline-block; padding: 6px 20px;
-    border-radius: 30px; font-size: 1.8rem; font-weight: 700;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: white;
-  }
-
-  /* BREAKDOWN */
-  .breakdown { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  .breakdown th {
-    text-align: left; padding: 9px 12px;
-    font-family: var(--mono); font-size: 0.68rem;
-    color: var(--text3); border-bottom: 1px solid var(--border);
-    background: var(--surface2); text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  .breakdown td { padding: 9px 12px; border-bottom: 1px solid var(--border); }
-  .breakdown tr:last-child td { border-bottom: none; font-weight: 600; color: var(--accent); }
-
-  .pbar-wrap { background: var(--surface3); border-radius: 4px; overflow: hidden; height: 6px; margin-top: 4px; }
-  .pbar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .6s cubic-bezier(.16,1,.3,1); }
-
-  /* TARGET PREDICTOR */
-  .target-result {
-    padding: 16px; border-radius: 8px;
-    font-family: var(--mono); font-size: 0.85rem;
-    margin-bottom: 16px; line-height: 1.7;
-    border: 1px solid var(--border);
-    background: var(--surface2);
-  }
-  .target-result.ok { border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.06); color: var(--success); }
-  .target-result.warn { border-color: rgba(251,191,36,0.4); background: rgba(251,191,36,0.06); color: var(--warn); }
-  .target-result.bad { border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.06); color: var(--danger); }
-
-  /* TABLES */
-  .qtable { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  .qtable th {
-    padding: 9px 12px; font-family: var(--mono); font-size: 0.68rem;
-    text-align: left; background: var(--surface2);
-    border-bottom: 1px solid var(--border); color: var(--text3);
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  .qtable td { padding: 9px 12px; border-bottom: 1px solid var(--border); font-family: var(--mono); }
-  .qtable tr:last-child td { border-bottom: none; }
-  .possible { color: var(--success); font-weight: 600; }
-  .impossible { color: var(--danger); }
-
-  .gtable { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  .gtable th {
-    padding: 9px 12px; font-family: var(--mono); font-size: 0.68rem;
-    text-align: left; background: var(--surface2);
-    border-bottom: 1px solid var(--border); color: var(--text3);
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  .gtable td { padding: 9px 12px; border-bottom: 1px solid var(--border); font-family: var(--mono); }
-  .gtable tr:last-child td { border-bottom: none; }
-  .gtable tr.active-grade td {
-    background: rgba(108,142,245,0.1);
-    color: var(--accent); font-weight: 700;
-  }
-
-  /* SEC TITLE */
-  .sec-title {
-    font-size: 1.15rem; font-weight: 700; margin: 32px 0 16px;
-    display: flex; align-items: center; gap: 10px;
-    color: var(--text);
-  }
-  .sec-title::after {
-    content: ''; flex: 1; height: 1px;
-    background: linear-gradient(90deg, var(--border2), transparent);
-  }
-  .sec-title span { font-family: var(--mono); font-size: 0.72rem; color: var(--text3); font-weight: 400; }
-
-  /* EXPORT */
-  .export-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
-  .btn-export {
-    padding: 10px 20px; border: 1px solid var(--border);
-    border-radius: 7px; background: var(--surface2);
-    font-family: var(--sans); font-size: 0.85rem; font-weight: 600;
-    cursor: pointer; color: var(--text); transition: all .15s;
-  }
-  .btn-export:hover { background: var(--surface3); border-color: var(--border2); }
-  .btn-export.primary {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: white; border: none;
-    box-shadow: 0 2px 10px rgba(108,142,245,0.3);
-  }
-  .btn-export.primary:hover { opacity: 0.9; }
-
-  .hidden { display: none !important; }
-
-  @media(max-width:480px) { .dyn-table-wrap { overflow-x: auto; } .weight-strip { grid-template-columns: repeat(3,1fr); } }
-</style>
+  <meta charset="UTF-8">
+  <title>Theory Calculator Dashboard</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; line-height: 1.5; }
+    nav { margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+    nav a { margin-right: 15px; text-decoration: none; color: blue; }
+    .card { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
+    input[type="number"] { width: 60px; margin-right: 10px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { text-align: left; padding: 5px; border-bottom: 1px solid #eee; }
+    .error { color: red; font-size: 0.9em; }
+    button { padding: 5px 10px; cursor: pointer; }
+    .res-box { font-weight: bold; font-size: 1.2em; }
+    footer { margin-top: 30px; border-top: 1px solid #ccc; padding-top: 10px; text-align: center; font-size: 0.9em; color: #666; }
+  </style>
 </head>
 <body>
 
-<!-- NAV -->
-new
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-badge">⚡ Theory Only</div>
-  <h1>Theory Marks Calculator</h1>
-  <p>Calculate your theory score and predict what you need in the final exam to hit your target.</p>
+<nav>
+  <strong>GradeCalc Dashboard</strong> &nbsp;&nbsp;
+  <a href="index.html">Full Course</a>
+  <a href="theory-calculator.html">Theory Only</a>
+</nav>
+
+<h2>Theory Marks Calculator</h2>
+
+<div class="card">
+  <div>Mid (25): <input type="number" id="mid-obt"> / <input type="number" id="mid-tot" value="30"></div>
+  <div>Final (50): <input type="number" id="fin-obt"> / <input type="number" id="fin-tot" value="50"></div>
+  
+  <h4>Quizzes (15%)</h4>
+  <button onclick="addRow('quiz')">+ Add Quiz</button>
+  <table id="quiz-table"><tr><th>Obtained</th><th>Total</th><th></th></tr><tbody id="quiz-body"></tbody></table>
+  
+  <h4>Assignments (10%)</h4>
+  <button onclick="addRow('asgn')">+ Add Assignment</button>
+  <table id="asgn-table"><tr><th>Obtained</th><th>Total</th><th></th></tr><tbody id="asgn-body"></tbody></table>
 </div>
 
-<!-- WEIGHT STRIP -->
-<div class="weight-strip">
-  <div class="ws-cell"><div class="label">MID</div><div class="value">25</div></div>
-  <div class="ws-cell"><div class="label">QUIZZES</div><div class="value">15</div></div>
-  <div class="ws-cell"><div class="label">ASSIGNMENTS</div><div class="value">10</div></div>
-  <div class="ws-cell"><div class="label">FINAL</div><div class="value">50</div></div>
-  <div class="ws-cell"><div class="label">TOTAL</div><div class="value" style="color:var(--accent2)">100</div></div>
+<button onclick="calculate()" style="width: 100%; padding: 10px; background: #007bff; color: white; border: none; font-size: 1.1em; border-radius: 5px;">Calculate Theory Score</button>
+<div id="error-msg" class="error"></div>
+
+<div id="results" class="card" style="display: none; margin-top: 20px; background: #f8f9fa;">
+  <h3>Results</h3>
+  <p>Theory Score: <span id="res-overall" class="res-box"></span> / 100</p>
+  <p>Grade: <span id="res-grade" class="res-box"></span></p>
+  
+  <hr style="margin: 15px 0; border: none; border-top: 1px solid #ccc;">
+  <h4>Target Predictor</h4>
+  Desired Score: <input type="number" id="target" oninput="predict()" placeholder="e.g. 85">
+  <div id="pred-res" style="margin-top: 10px; font-weight: 500;"></div>
 </div>
 
-<div class="container">
-
-  <!-- MID + FINAL -->
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-head"><h2>Theory Mid Exam</h2><span class="badge">25 marks</span></div>
-      <div class="card-body">
-        <div class="grid-2">
-          <div class="field">
-            <label>Obtained Marks</label>
-            <input class="tin" type="number" id="mid-obt" min="0" placeholder="e.g. 20">
-            <div class="valmsg" id="mid-obt-err"></div>
-          </div>
-          <div class="field">
-            <label>Total Marks</label>
-            <input class="tin" type="number" id="mid-tot" min="1" placeholder="e.g. 30">
-            <div class="valmsg" id="mid-tot-err"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-head"><h2>Final Exam</h2><span class="badge">50 marks</span></div>
-      <div class="card-body">
-        <div class="grid-2">
-          <div class="field">
-            <label>Obtained <span style="color:var(--text3);font-weight:400">(optional)</span></label>
-            <input class="tin" type="number" id="fin-obt" min="0" placeholder="leave blank if pending">
-            <div class="valmsg" id="fin-obt-err"></div>
-          </div>
-          <div class="field">
-            <label>Total Marks</label>
-            <input class="tin" type="number" id="fin-tot" min="1" placeholder="e.g. 50">
-            <div class="valmsg" id="fin-tot-err"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- QUIZZES -->
-  <div class="card">
-    <div class="card-head"><h2>Quizzes</h2><span class="badge">15 marks</span></div>
-    <div class="card-body">
-      <div class="count-row">
-        <label>Number of quizzes:</label>
-        <input class="count-input" type="number" id="quiz-count" min="0" max="20" value="0">
-      </div>
-      <div class="dyn-table-wrap">
-        <table class="dyn-table"><thead><tr><th>Quiz Name</th><th>Obtained</th><th>Total</th><th></th></tr></thead>
-        <tbody id="quiz-body"></tbody></table>
-      </div>
-      <button class="btn-add" onclick="addRow('quiz')">＋ Add Quiz</button>
-    </div>
-  </div>
-
-  <!-- ASSIGNMENTS -->
-  <div class="card">
-    <div class="card-head"><h2>Assignments</h2><span class="badge">10 marks</span></div>
-    <div class="card-body">
-      <div class="count-row">
-        <label>Number of assignments:</label>
-        <input class="count-input" type="number" id="asgn-count" min="0" max="20" value="0">
-      </div>
-      <div class="dyn-table-wrap">
-        <table class="dyn-table"><thead><tr><th>Assignment Name</th><th>Obtained</th><th>Total</th><th></th></tr></thead>
-        <tbody id="asgn-body"></tbody></table>
-      </div>
-      <button class="btn-add" onclick="addRow('asgn')">＋ Add Assignment</button>
-    </div>
-  </div>
-
-  <button class="btn-calc" onclick="calculate()">Calculate Theory Score →</button>
-
-  <!-- RESULTS -->
-  <div id="results-panel" class="hidden">
-    <div class="sec-title">Results</div>
-
-    <div class="score-grid">
-      <div class="score-box main">
-        <div class="slabel">THEORY SCORE</div>
-        <div class="sval" id="res-total">—</div>
-        <div class="ssub">out of 100</div>
-      </div>
-      <div class="score-box">
-        <div class="slabel">PERCENTAGE</div>
-        <div class="sval" id="res-pct" style="color:var(--accent)">—</div>
-        <div class="ssub">%</div>
-      </div>
-      <div class="score-box">
-        <div class="slabel">GRADE</div>
-        <div class="sval"><span class="grade-pill" id="res-grade">—</span></div>
-        <div class="ssub" id="res-grade-range">—</div>
-      </div>
-      <div class="score-box">
-        <div class="slabel">INTERNAL (excl. final)</div>
-        <div class="sval" id="res-internal" style="color:var(--accent2)">—</div>
-        <div class="ssub">out of 50</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-head"><h2>Score Breakdown</h2></div>
-      <div class="card-body"><table class="breakdown" id="breakdown-table"></table></div>
-    </div>
-
-    <div class="sec-title">Target Predictor <span>How much do I need in the final?</span></div>
-
-    <div class="card">
-      <div class="card-body">
-        <div class="field" style="margin-bottom:20px">
-          <label>Desired Overall Theory Score (0–100)</label>
-          <input class="tin" type="number" id="target-score" min="0" max="100" placeholder="e.g. 85" oninput="updatePredictor()" style="max-width:200px">
-        </div>
-        <div id="target-result-box" class="target-result hidden"></div>
-
-        <table class="qtable">
-          <thead><tr><th>Target</th><th>Required Final (/max)</th><th>Required %</th><th>Status</th></tr></thead>
-          <tbody id="quick-body"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="sec-title">Grade Reference</div>
-    <div class="card">
-      <div class="card-body">
-        <table class="gtable">
-          <thead><tr><th>Percentage</th><th>Grade</th><th>GPA</th></tr></thead>
-          <tbody id="grade-body"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="export-row">
-      <button class="btn-export primary" onclick="exportPDF()">⬇ Export PDF</button>
-      <button class="btn-export" onclick="window.print()">🖨 Print</button>
-      <button class="btn-export" onclick="clearData()" style="color:var(--danger);border-color:rgba(248,113,113,0.3)">🗑 Clear Data</button>
-    </div>
-  </div>
-
-</div>
+<footer>
+  <p>&copy; 2026 GradeCalc. Minimal UI Version.</p>
+</footer>
 
 <script>
+let rows = { quiz: [], asgn: [] };
 const GRADES = [
-  { min:85, label:'A',  gpa:'4.0', range:'85% and above' },
-  { min:80, label:'A-', gpa:'3.7', range:'80% – 84%' },
-  { min:75, label:'B+', gpa:'3.3', range:'75% – 79%' },
-  { min:70, label:'B',  gpa:'3.0', range:'70% – 74%' },
-  { min:65, label:'C+', gpa:'2.3', range:'65% – 69%' },
-  { min:60, label:'C',  gpa:'2.0', range:'60% – 64%' },
-  { min:0,  label:'F',  gpa:'0.0', range:'Below 60%' }
+  { min: 85, label: 'A' }, { min: 80, label: 'A-' }, { min: 75, label: 'B+' }, 
+  { min: 70, label: 'B' }, { min: 65, label: 'C+' }, { min: 60, label: 'C' }, 
+  { min: 0, label: 'F' }
 ];
 
-let rows = { quiz:[], asgn:[] };
-let calcResult = null;
-const LS_KEY = 'theory_calc_v1';
-
-function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function fmt(n){ return n.toFixed(2); }
-function v(id){ return document.getElementById(id)?.value||''; }
-function getGrade(p){ for(const g of GRADES) if(p>=g.min) return g; return GRADES[GRADES.length-1]; }
-
-function addRow(type){ rows[type].push({name:'',obt:'',tot:''}); renderRows(type); syncCount(type); saveLS(); }
-function delRow(type,i){ rows[type].splice(i,1); renderRows(type); syncCount(type); saveLS(); }
-
-function renderRows(type){
-  const tb = document.getElementById(type+'-body');
-  tb.innerHTML='';
-  rows[type].forEach((r,i)=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td><input class="tin" type="text" placeholder="Name (optional)" value="${escHtml(r.name)}" oninput="updateRow('${type}',${i},'name',this.value)"></td>
-    <td><input class="tin" type="number" min="0" placeholder="0" value="${r.obt}" oninput="updateRow('${type}',${i},'obt',this.value)"></td>
-    <td><input class="tin" type="number" min="1" placeholder="10" value="${r.tot}" oninput="updateRow('${type}',${i},'tot',this.value)"></td>
-    <td><button class="btn-del" onclick="delRow('${type}',${i})">✕</button></td>`;
-    tb.appendChild(tr);
-  });
+function addRow(type) {
+  rows[type].push({ obt: '', tot: '10' });
+  renderRows(type);
+  save();
+}
+function delRow(type, i) {
+  rows[type].splice(i, 1);
+  renderRows(type);
+  save();
+}
+function renderRows(type) {
+  const tb = document.getElementById(type + '-body');
+  tb.innerHTML = rows[type].map((r, i) => `
+    <tr>
+      <td><input type="number" value="${r.obt}" oninput="rows['${type}'][${i}].obt=this.value; save()"></td>
+      <td><input type="number" value="${r.tot}" oninput="rows['${type}'][${i}].tot=this.value; save()"></td>
+      <td><button onclick="delRow('${type}', ${i})">X</button></td>
+    </tr>
+  `).join('');
 }
 
-function updateRow(type,i,f,val){ rows[type][i][f]=val; saveLS(); }
-function syncCount(type){ document.getElementById(type+'-count').value=rows[type].length; }
-
-['quiz','asgn'].forEach(t=>{
-  document.getElementById(t+'-count').addEventListener('change',function(){
-    const n=Math.max(0,Math.min(20,parseInt(this.value)||0));
-    this.value=n;
-    while(rows[t].length<n) rows[t].push({name:'',obt:'',tot:''});
-    while(rows[t].length>n) rows[t].pop();
-    renderRows(t); saveLS();
-  });
-});
-
-function showErr(id,msg){ const el=document.getElementById(id); if(!el) return; el.textContent=msg; el.classList.add('show'); document.getElementById(id.replace('-err',''))?.classList.add('err'); }
-function clearErr(id){ const el=document.getElementById(id); if(!el) return; el.classList.remove('show'); document.getElementById(id.replace('-err',''))?.classList.remove('err'); }
-
-function valPair(oId,tId,lbl){
-  clearErr(oId+'-err'); clearErr(tId+'-err');
-  const ov=document.getElementById(oId).value.trim();
-  const tv=document.getElementById(tId).value.trim();
-  if(ov===''&&tv==='') return {skip:true};
-  const ob=parseFloat(ov), to=parseFloat(tv);
-  if(tv===''||isNaN(to)||to<=0){ showErr(tId+'-err',lbl+': Total required (>0)'); return null; }
-  if(ov===''||isNaN(ob)){ showErr(oId+'-err',lbl+': Obtained required'); return null; }
-  if(ob<0){ showErr(oId+'-err','Cannot be negative'); return null; }
-  if(ob>to){ showErr(oId+'-err','Obtained > Total!'); return null; }
-  return {ob,to};
+function sumRows(type) {
+  let obt = 0, tot = 0;
+  for (let r of rows[type]) {
+    if (r.obt && r.tot) { obt += Number(r.obt); tot += Number(r.tot); }
+  }
+  return { obt, tot };
 }
 
-function valRows(type){
-  let totObt=0,totTot=0,ok=true;
-  rows[type].forEach(r=>{
-    if(r.obt===''||r.tot==='') return;
-    const ob=parseFloat(r.obt),to=parseFloat(r.tot);
-    if(isNaN(ob)||isNaN(to)||to<=0||ob<0||ob>to){ ok=false; return; }
-    totObt+=ob; totTot+=to;
-  });
-  return {totObt,totTot,ok};
+function val(id) { return Number(document.getElementById(id).value); }
+function raw(id) { return document.getElementById(id).value; }
+
+let calcRes = null;
+
+function calculate() {
+  document.getElementById('error-msg').innerText = '';
+  
+  let q = sumRows('quiz'), a = sumRows('asgn');
+  
+  let mid = raw('mid-obt') ? (val('mid-obt') / val('mid-tot')) * 25 : 0;
+  let fin = raw('fin-obt') ? (val('fin-obt') / val('fin-tot')) * 50 : 0;
+  let qSc = q.tot ? (q.obt / q.tot) * 15 : 0;
+  let aSc = a.tot ? (a.obt / a.tot) * 10 : 0;
+  let overall = mid + fin + qSc + aSc;
+
+  let grade = GRADES.find(g => overall >= g.min).label;
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('res-overall').innerText = overall.toFixed(2);
+  document.getElementById('res-grade').innerText = grade;
+
+  calcRes = { 
+    thTotNoFin: mid + qSc + aSc, 
+    finTot: val('fin-tot') || 50,
+    overall
+  };
+  
+  predict();
+  save();
 }
 
-function calculate(){
-  let valid=true;
-  const mid=valPair('mid-obt','mid-tot','Mid');
-  if(mid===null) valid=false;
-  const fin=valPair('fin-obt','fin-tot','Final');
-  if(fin===null) valid=false;
-  const qv=valRows('quiz');
-  const av=valRows('asgn');
-  if(!qv.ok||!av.ok) valid=false;
-  if(!valid){ alert('Please fix errors highlighted in red.'); return; }
-
-  let quizScore=0, asgnScore=0, midScore=0, finScore=0, finAttempted=false;
-  if(qv.totTot>0) quizScore=(qv.totObt/qv.totTot)*15;
-  if(av.totTot>0) asgnScore=(av.totObt/av.totTot)*10;
-  if(mid&&!mid.skip) midScore=(mid.ob/mid.to)*25;
-  if(fin&&!fin.skip){ finScore=(fin.ob/fin.to)*50; finAttempted=true; }
-
-  const internal=quizScore+asgnScore+midScore;
-  const total=internal+finScore;
-  const pct=total;
-  const grade=getGrade(pct);
-  const finTotal=(fin&&!fin.skip)?fin.to:50;
-
-  calcResult={quizScore,asgnScore,midScore,finScore,finAttempted,internal,total,pct,grade,finTotal,fin,mid,qv,av};
-  renderResults(calcResult);
-  saveLS();
+function predict() {
+  if (!calcRes) return;
+  let tgt = val('target');
+  let res = document.getElementById('pred-res');
+  if (!raw('target')) { res.innerText = ''; return; }
+  
+  let neededTFinScore = tgt - calcRes.thTotNoFin;
+  let neededTFinMarks = (neededTFinScore / 50) * calcRes.finTot;
+  
+  if (calcRes.overall >= tgt) res.innerText = "Already achieved! 🎉";
+  else if (neededTFinMarks > calcRes.finTot) res.innerText = "Impossible to achieve. ❌";
+  else if (neededTFinMarks < 0) res.innerText = "Already achievable without final! 🎉";
+  else res.innerText = `You need ${neededTFinMarks.toFixed(2)} / ${calcRes.finTot} in Final to hit ${tgt}.`;
 }
 
-function renderResults(r){
-  document.getElementById('results-panel').classList.remove('hidden');
-  document.getElementById('res-total').textContent=fmt(r.total);
-  document.getElementById('res-pct').textContent=fmt(r.pct);
-  document.getElementById('res-grade').textContent=r.grade.label;
-  document.getElementById('res-grade-range').textContent=r.grade.range;
-  document.getElementById('res-internal').textContent=fmt(r.internal);
-
-  const bt=document.getElementById('breakdown-table');
-  bt.innerHTML=`<thead><tr><th>Component</th><th>Score / Weight</th><th>Contribution</th></tr></thead><tbody>
-    ${bRow('Quizzes',r.quizScore,15)}
-    ${bRow('Assignments',r.asgnScore,10)}
-    ${bRow('Mid Exam',r.midScore,25)}
-    ${bRow('Final Exam',r.finScore,50,!r.finAttempted)}
-    ${bRow('TOTAL',r.total,100)}
-  </tbody>`;
-
-  renderGradeTable(r.pct);
-  renderQuickTable();
-  updatePredictor();
-  document.getElementById('results-panel').scrollIntoView({behavior:'smooth'});
+function save() {
+  let ids = ['mid-obt','mid-tot','fin-obt','fin-tot','target'];
+  let data = { rows, fields: {} };
+  ids.forEach(id => data.fields[id] = raw(id));
+  localStorage.setItem('gradecalc_th_min', JSON.stringify(data));
 }
 
-function bRow(lbl,score,max,skipped=false){
-  const pct=max>0?(score/max)*100:0;
-  const display=skipped?'(not attempted)':fmt(score)+' / '+max;
-  return `<tr><td>${lbl}</td><td style="font-family:var(--mono)">${display}</td><td style="min-width:120px"><div class="pbar-wrap"><div class="pbar" style="width:${Math.min(100,pct)}%"></div></div></td></tr>`;
-}
-
-function renderGradeTable(pct){
-  const tb=document.getElementById('grade-body');
-  tb.innerHTML='';
-  GRADES.forEach(g=>{
-    const tr=document.createElement('tr');
-    if(getGrade(pct).label===g.label) tr.classList.add('active-grade');
-    tr.innerHTML=`<td>${g.range}</td><td>${g.label}</td><td>${g.gpa}</td>`;
-    tb.appendChild(tr);
-  });
-}
-
-function calcRequired(desired){
-  if(!calcResult) return null;
-  const r=calcResult;
-  const knownInternal=r.quizScore+r.asgnScore+r.midScore;
-  const finScoreNeeded=desired-knownInternal;
-  const finTotal=r.finTotal||50;
-  const marksNeeded=(finScoreNeeded/50)*finTotal;
-  const pctNeeded=(marksNeeded/finTotal)*100;
-  return {marksNeeded,pctNeeded,finTotal,finScoreNeeded};
-}
-
-function updatePredictor(){
-  if(!calcResult) return;
-  const inp=document.getElementById('target-score').value.trim();
-  const box=document.getElementById('target-result-box');
-  if(inp!==''){
-    const desired=parseFloat(inp);
-    box.classList.remove('hidden');
-    if(isNaN(desired)||desired<0||desired>100){
-      box.className='target-result warn'; box.textContent='Enter a valid score between 0 and 100.';
-    } else if(calcResult.total>=desired){
-      box.className='target-result ok'; box.textContent=`✓ Target already achieved! Your score (${fmt(calcResult.total)}) meets ${desired}.`;
-    } else {
-      const res=calcRequired(desired);
-      if(res.marksNeeded>res.finTotal){
-        box.className='target-result bad'; box.textContent=`✗ Not achievable. You'd need ${fmt(res.marksNeeded)}/${res.finTotal} (${fmt(res.pctNeeded)}%) — exceeds maximum.`;
-      } else if(res.marksNeeded<0){
-        box.className='target-result ok'; box.textContent=`✓ Already achievable without any final exam marks.`;
-      } else {
-        box.className='target-result warn'; box.innerHTML=`You need <strong>${fmt(res.marksNeeded)} / ${res.finTotal}</strong> in the Final Exam (${fmt(res.pctNeeded)}%) to reach <strong>${desired}</strong>.`;
+function load() {
+  try {
+    let data = JSON.parse(localStorage.getItem('gradecalc_th_min'));
+    if (!data) return;
+    if (data.rows) rows = data.rows;
+    if (data.fields) {
+      for (let k in data.fields) {
+        if(document.getElementById(k)) document.getElementById(k).value = data.fields[k];
       }
     }
-  } else { box.classList.add('hidden'); }
-  renderQuickTable();
+  } catch(e) {}
+  renderRows('quiz'); renderRows('asgn');
 }
 
-function renderQuickTable(){
-  const targets=[70,75,80,85,90,95];
-  const tb=document.getElementById('quick-body');
-  tb.innerHTML='';
-  targets.forEach(t=>{
-    const tr=document.createElement('tr');
-    if(!calcResult){ tr.innerHTML=`<td>${t}</td><td colspan="3" style="color:var(--text3)">—</td>`; }
-    else {
-      const res=calcRequired(t);
-      let mC,pC,sC;
-      if(calcResult.total>=t){ mC=`<span class="possible">—</span>`; pC=`<span class="possible">—</span>`; sC=`<span class="possible">✓ Achieved</span>`; }
-      else if(res.marksNeeded<0){ mC=`<span class="possible">0</span>`; pC=`<span class="possible">0%</span>`; sC=`<span class="possible">✓ Achievable</span>`; }
-      else if(res.marksNeeded>res.finTotal){ mC=`<span class="impossible">${fmt(res.marksNeeded)}</span>`; pC=`<span class="impossible">${fmt(res.pctNeeded)}%</span>`; sC=`<span class="impossible">✗ Not possible</span>`; }
-      else { mC=`<span class="possible">${fmt(res.marksNeeded)}</span>`; pC=`<span class="possible">${fmt(res.pctNeeded)}%</span>`; sC=`<span class="possible">✓ Achievable</span>`; }
-      tr.innerHTML=`<td style="font-weight:600">${t}</td><td>${mC}</td><td>${pC}</td><td>${sC}</td>`;
-    }
-    tb.appendChild(tr);
-  });
-}
-
-function saveLS(){
-  const data={rows,fields:{'mid-obt':v('mid-obt'),'mid-tot':v('mid-tot'),'fin-obt':v('fin-obt'),'fin-tot':v('fin-tot'),'target-score':v('target-score')}};
-  localStorage.setItem(LS_KEY,JSON.stringify(data));
-}
-
-function loadLS(){
-  try{
-    const raw=localStorage.getItem(LS_KEY); if(!raw) return;
-    const data=JSON.parse(raw);
-    if(data.rows) rows=Object.assign({quiz:[],asgn:[]},data.rows);
-    if(data.fields) Object.entries(data.fields).forEach(([id,val])=>{ const el=document.getElementById(id); if(el) el.value=val; });
-    ['quiz','asgn'].forEach(t=>{ renderRows(t); syncCount(t); });
-  } catch(e){}
-}
-
-function clearData(){
-  if(!confirm('Clear all saved data?')) return;
-  localStorage.removeItem(LS_KEY);
-  rows={quiz:[],asgn:[]};
-  ['quiz','asgn'].forEach(t=>{ renderRows(t); syncCount(t); });
-  ['mid-obt','mid-tot','fin-obt','fin-tot','target-score'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
-  calcResult=null;
-  document.getElementById('results-panel').classList.add('hidden');
-}
-
-function exportPDF(){
-  if(!calcResult){ alert('Calculate first.'); return; }
-  const {jsPDF}=window.jspdf;
-  const doc=new jsPDF();
-  const r=calcResult;
-  let y=18, lm=15;
-  doc.setFont('helvetica','bold'); doc.setFontSize(16);
-  doc.text('Theory Marks Calculator – Report',lm,y); y+=10;
-  doc.setFont('helvetica','normal'); doc.setFontSize(10);
-  doc.text('Generated: '+new Date().toLocaleString(),lm,y); y+=12;
-  const line=(lbl,val)=>{ doc.setFont('helvetica','bold'); doc.text(lbl+':',lm,y); doc.setFont('helvetica','normal'); doc.text(String(val),lm+70,y); y+=7; };
-  doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.text('── Scores ──',lm,y); y+=8; doc.setFontSize(10);
-  line('Quiz Score (/15)',fmt(r.quizScore));
-  line('Assignment Score (/10)',fmt(r.asgnScore));
-  line('Mid Score (/25)',fmt(r.midScore));
-  line('Final Score (/50)',r.finAttempted?fmt(r.finScore):'Not attempted');
-  line('Theory Total (/100)',fmt(r.total));
-  line('Percentage',fmt(r.pct)+'%');
-  line('Grade',r.grade.label+' ('+r.grade.range+')'); y+=6;
-  doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.text('── Target Predictions ──',lm,y); y+=8; doc.setFontSize(10);
-  [70,75,80,85,90,95].forEach(t=>{
-    const res=calcRequired(t);
-    let status;
-    if(r.total>=t) status='Already achieved';
-    else if(res.marksNeeded>res.finTotal) status='Not possible';
-    else if(res.marksNeeded<0) status='Achievable (0 needed)';
-    else status=`Need ${fmt(res.marksNeeded)}/${res.finTotal} (${fmt(res.pctNeeded)}%)`;
-    line(`Target ${t}`,status);
-  });
-  doc.save('theory_marks_report.pdf');
-}
-
-document.addEventListener('input',saveLS);
-loadLS();
-renderQuickTable();
+load();
 </script>
 </body>
 </html>
